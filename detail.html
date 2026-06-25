@@ -7,15 +7,17 @@
   <style>
     body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; margin: 0; }
     h1 { text-align: center; color: #333; margin-bottom: 20px; }
+    
+    /* Bikin 3 kolom rapi */
     .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    
     .card { padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; color: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     .card div:first-child { font-size: 14px; margin-bottom: 5px; opacity: 0.9; }
     .card div:last-child { font-size: 18px; }
     
-    /* Kunci warna */
-    .biru { background: #2563eb; }    /* Saldo Akhir */
-    .kuning { background: #f59e0b; }  /* Masuk & Piutang */
-    .merah { background: #dc2626; }   /* Keluar & Hutang */
+    /* Warna fix: Biru = Masuk, Merah = Keluar/Hutang */
+    .biru { background: #2563eb; }   
+    .merah { background: #dc2626; }   
     
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 14px; }
@@ -37,11 +39,12 @@
   <h1>Detail Cashflow</h1>
 
   <div class="summary">
+    <!-- Baris 1 -->
     <div class="card biru">
       <div>Saldo Akhir</div>
       <div id="saldoAkhir">Rp 0</div>
     </div>
-    <div class="card kuning">
+    <div class="card biru"> <!-- INI YANG DIGANTI JADI BIRU -->
       <div>Total Masuk</div>
       <div id="totalMasuk">Rp 0</div>
     </div>
@@ -49,11 +52,13 @@
       <div>Total Keluar</div>
       <div id="totalKeluar">Rp 0</div>
     </div>
+
+    <!-- Baris 2 -->
     <div class="card merah">
       <div>Total Hutang</div>
       <div id="totalHutang">Rp 0</div>
     </div>
-    <div class="card kuning">
+    <div class="card biru"> <!-- INI JUGA BIRU -->
       <div>Dipinjam/Minjemin</div>
       <div id="dipinjam">Rp 0</div>
     </div>

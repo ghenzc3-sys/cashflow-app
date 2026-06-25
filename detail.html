@@ -6,9 +6,17 @@
   <title>Detail Cashflow</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; margin: 0; position: relative; }
-    h1 { text-align: center; color: #333; margin-bottom: 20px; }
     
-    /* Tombol Kosongkan pojok kanan atas */
+    h1 { 
+      text-align: center; 
+      color: #2563eb; /* Biru */ 
+      font-size: 32px; /* Gede */
+      font-weight: 800; 
+      margin-bottom: 25px; 
+      letter-spacing: 0.5px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+    
     .btn-kosongkan { 
       position: absolute; 
       top: 20px; 
@@ -34,8 +42,6 @@
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 14px; }
     th { background: #2563eb; color: white; }
     tfoot td { font-weight: bold; background: #f1f5f9; }
-    
-    /* Tombol Kembali pojok kiri bawah tabel */
     .btn-kembali { 
       background: #2563eb; 
       color: white; 
@@ -47,6 +53,7 @@
     }
     
     @media (max-width: 768px) {
+      h1 { font-size: 24px; } /* HP dibikin lebih kecil dikit */
       .summary { grid-template-columns: repeat(2, 1fr); }
       table { font-size: 12px; }
       th, td { padding: 6px; }
@@ -56,7 +63,6 @@
 </head>
 <body>
   <h1>Detail Cashflow</h1>
-
   <button class="btn-kosongkan" onclick="kosongkanData()">Kosongkan</button>
 
   <div class="summary">
@@ -69,49 +75,27 @@
   </div>
 
   <table id="tabelDetail">
-    <thead>
-      <tr>
-        <th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th>
-        <th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th>
-        <th>Pengembalian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th>
-      </tr>
-    </thead>
+    <thead><tr><th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th><th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th></tr></thead>
     <tbody></tbody>
-    <tfoot>
-      <tr>
-        <td colspan="10" style="text-align:right">TOTAL</td>
-        <td id="totalSisa">Rp 0</td>
-      </tr>
-    </tfoot>
+    <tfoot><tr><td colspan="10" style="text-align:right">TOTAL</td><td id="totalSisa">Rp 0</td></tr></tfoot>
   </table>
 
-  <!-- Tombol Kembali di bawah tabel kiri -->
   <button class="btn-kembali" onclick="window.location.href='index.html'">← Kembali</button>
 
   <script>
     const formatRupiah = (num) => 'Rp ' + Number(num || 0).toLocaleString('id-ID');
     function loadDetail() {
       const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
-      const tbody = document.querySelector('#tabelDetail tbody');
-      tbody.innerHTML = '';
+      const tbody = document.querySelector('#tabelDetail tbody'); tbody.innerHTML = '';
       let saldo = 0, totalMasuk = 0, totalKeluar = 0, totalHutang = 0, dipinjam = 0;
       data.forEach((d, i) => {
         const masuk = d.masuk || 0; const keluar = d.keluar || 0;
         const hutang = d.hutang || 0; const minjemin = d.minjemin || 0;
         const dikembalikan = d.dikembalikan || 0; const pengembalian = d.pengembalian || 0;
         saldo += masuk - keluar - hutang + minjemin - dikembalikan + pengembalian;
-        totalMasuk += masuk + pengembalian;
-        totalKeluar += keluar + dikembalikan;
-        totalHutang += hutang;
-        dipinjam += minjemin;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i + 1}</td><td>${d.tanggal || '-'}</td><td>${d.item || '-'}</td><td>${d.nama || '-'}</td>
-          <td>${formatRupiah(minjemin)}</td><td>${formatRupiah(hutang)}</td>
-          <td>${formatRupiah(dikembalikan)}</td><td>${formatRupiah(pengembalian)}</td>
-          <td>${formatRupiah(masuk)}</td><td>${formatRupiah(keluar)}</td><td>${formatRupiah(saldo)}</td>
-        `;
-        tbody.appendChild(tr);
+        totalMasuk += masuk + pengembalian; totalKeluar += keluar + dikembalikan;
+        totalHutang += hutang; dipinjam += minjemin;
+        tbody.innerHTML += `<tr><td>${i + 1}</td><td>${d.tanggal || '-'}</td><td>${d.item || '-'}</td><td>${d.nama || '-'}</td><td>${formatRupiah(minjemin)}</td><td>${formatRupiah(hutang)}</td><td>${formatRupiah(dikembalikan)}</td><td>${formatRupiah(pengembalian)}</td><td>${formatRupiah(masuk)}</td><td>${formatRupiah(keluar)}</td><td>${formatRupiah(saldo)}</td></tr>`;
       });
       document.getElementById('saldoAkhir').textContent = formatRupiah(saldo);
       document.getElementById('totalMasuk').textContent = formatRupiah(totalMasuk);
@@ -121,12 +105,7 @@
       document.getElementById('sisaHutang').textContent = formatRupiah(totalHutang - dipinjam);
       document.getElementById('totalSisa').textContent = formatRupiah(saldo);
     }
-    function kosongkanData() {
-      if(confirm('Yakin mau kosongkan semua data?')) {
-        localStorage.removeItem('cashflowData');
-        loadDetail();
-      }
-    }
+    function kosongkanData() { if(confirm('Yakin mau kosongkan semua data?')) { localStorage.removeItem('cashflowData'); loadDetail(); } }
     loadDetail();
   </script>
 </body>

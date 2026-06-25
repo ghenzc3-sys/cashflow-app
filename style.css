@@ -1,57 +1,25 @@
 body {
-    font-family: 'Comic Sans MS', sans-serif;
-    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
     padding: 20px;
 }
 .container {
     max-width: 700px;
     margin: auto;
     background: white;
-    padding: 25px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    border: 3px dashed #fdcb6e;
-}
-h1 { text-align: center; color: #e17055; }
-.subtitle { text-align: center; color: #636e72; }
-.input-box { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-input, select, button {
-    padding: 12px;
+    padding: 20px;
     border-radius: 10px;
-    border: 2px solid #fdcb6e;
-    font-size: 15px;
 }
-button {
-    background: #e17055;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-}
-button:hover { background: #d63031; }
-.balance { text-align: center; color: #00b894; font-size: 26px; margin: 20px 0; }
+h1 { text-align: center; color: #333; }
+.input-box { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+input, select, button { padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-size: 15px; }
+button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+button:hover { background: #45a049; }
+.balance { text-align: center; color: #2196F3; font-size: 24px; margin: 20px 0; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-th {
-    background: #fdcb6e;
-    color: #2d3436;
-    padding: 12px;
-    border-radius: 8px 8px 0 0;
-}
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ffeaa7;
-    text-align: center;
-}
-.income { color: #00b894; font-weight: bold; }
-.expense { color: #d63031; font-weight: bold; }
-.delete-btn {
-    background: #ff7675;
-    padding: 5px 10px;
-    font-size: 13px;
-    border-radius: 6px;
-}
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th { background: #4CAF50; color: white; padding: 12px; }
+td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+.income { color: green; font-weight: bold; }
+.expense { color: red; font-weight: bold; }
+.delete-btn { background: #f44336; padding: 5px 10px; font-size: 13px; border: none; border-radius: 5px; color: white; cursor: pointer; }

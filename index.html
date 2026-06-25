@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashflow Kucing 😸</title>
+    <title>Cashflow</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>😸 Cashflow Kucing Pribadi</h1>
-        <p class="subtitle">Meong~ catat keuangan biar gak boncos</p>
+        <h1>Cashflow</h1>
         
         <div class="input-box">
-            <input type="text" id="desc" placeholder="Keterangan: Makan Whiskas">
-            <input type="number" id="amount" placeholder="Jumlah: 35000">
+            <input type="text" id="desc" placeholder="Keterangan">
+            <input type="number" id="amount" placeholder="Jumlah">
             <select id="type">
-                <option value="income">🐟 Pemasukan</option>
-                <option value="expense">🐾 Pengeluaran</option>
+                <option value="income">Pemasukan</option>
+                <option value="expense">Pengeluaran</option>
             </select>
-            <button onclick="addData()">Tambah Meong</button>
+            <button onclick="addData()">Tambah</button>
         </div>
         
         <h2 class="balance">Saldo: <span id="balance">Rp 0</span></h2>

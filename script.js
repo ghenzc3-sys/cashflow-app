@@ -1,4 +1,4 @@
-let data = JSON.parse(localStorage.getItem('cashflowKucing')) || [];
+let data = JSON.parse(localStorage.getItem('cashflow')) || [];
 
 function addData() {
     let desc = document.getElementById('desc').value;
@@ -6,12 +6,12 @@ function addData() {
     let type = document.getElementById('type').value;
     
     if(desc == '' || isNaN(amount)) {
-        alert('Meong! Isi keterangan & jumlah dulu 😿');
+        alert('Isi keterangan & jumlah dulu');
         return;
     }
     
     data.push({desc, amount, type, id: Date.now()});
-    localStorage.setItem('cashflowKucing', JSON.stringify(data));
+    localStorage.setItem('cashflow', JSON.stringify(data));
     showData();
     document.getElementById('desc').value = '';
     document.getElementById('amount').value = '';
@@ -24,7 +24,7 @@ function showData() {
     
     data.forEach(item => {
         let row = document.createElement('tr');
-        let typeText = item.type == 'income' ? '🐟 Masuk' : '🐾 Keluar';
+        let typeText = item.type == 'income' ? 'Pemasukan' : 'Pengeluaran';
         let typeClass = item.type == 'income' ? 'income' : 'expense';
         
         row.innerHTML = `
@@ -43,7 +43,7 @@ function showData() {
 
 function deleteData(id) {
     data = data.filter(item => item.id != id);
-    localStorage.setItem('cashflowKucing', JSON.stringify(data));
+    localStorage.setItem('cashflow', JSON.stringify(data));
     showData();
 }
 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Cashflow App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Cashflow Pribadi</h1>
+        <input type="text" id="desc" placeholder="Keterangan">
+        <input type="number" id="amount" placeholder="Jumlah">
+        <select id="type">
+            <option value="income">Pemasukan</option>
+            <option value="expense">Pengeluaran</option>
+        </select>
+        <button onclick="addData()">Tambah</button>
+
+        <h3>Saldo: <span id="balance">Rp 0</span></h3>
+        <div id="list"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

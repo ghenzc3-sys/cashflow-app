@@ -1,12 +1,57 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: Arial; background: #f0f2f5; padding: 20px; }
-.container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-h1 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
-input, select, button { padding: 10px; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
-button { background: #3498db; color: white; cursor: pointer; border: none; }
-button:hover { background: #2980b9; }
-h3 { margin-top: 20px; text-align: center; color: #27ae60; }
-#list { margin-top: 20px; }
-.item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-.income { color: green; }
-.expense { color: red; }
+body {
+    font-family: 'Comic Sans MS', sans-serif;
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    padding: 20px;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border: 3px dashed #fdcb6e;
+}
+h1 { text-align: center; color: #e17055; }
+.subtitle { text-align: center; color: #636e72; }
+.input-box { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+input, select, button {
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #fdcb6e;
+    font-size: 15px;
+}
+button {
+    background: #e17055;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+button:hover { background: #d63031; }
+.balance { text-align: center; color: #00b894; font-size: 26px; margin: 20px 0; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th {
+    background: #fdcb6e;
+    color: #2d3436;
+    padding: 12px;
+    border-radius: 8px 8px 0 0;
+}
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ffeaa7;
+    text-align: center;
+}
+.income { color: #00b894; font-weight: bold; }
+.expense { color: #d63031; font-weight: bold; }
+.delete-btn {
+    background: #ff7675;
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+}

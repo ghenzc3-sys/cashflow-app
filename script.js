@@ -1,49 +1,50 @@
-let data = JSON.parse(localStorage.getItem('cashflow')) || [];
+let data = JSON.parse(localStorage.getItem('cashflowKucing')) || [];
 
 function addData() {
-    const desc = document.getElementById('desc').value;
-    const amount = parseFloat(document.getElementById('amount').value);
-    const type = document.getElementById('type').value;
+    let desc = document.getElementById('desc').value;
+    let amount = parseInt(document.getElementById('amount').value);
+    let type = document.getElementById('type').value;
     
-    if (!desc || !amount) return alert('Isi keterangan & jumlah!');
+    if(desc == '' || isNaN(amount)) {
+        alert('Meong! Isi keterangan & jumlah dulu 😿');
+        return;
+    }
     
-    data.push({ id: Date.now(), desc, amount, type });
-    saveData();
-    
+    data.push({desc, amount, type, id: Date.now()});
+    localStorage.setItem('cashflowKucing', JSON.stringify(data));
+    showData();
     document.getElementById('desc').value = '';
     document.getElementById('amount').value = '';
 }
 
-function deleteData(id) {
-    data = data.filter(item => item.id !== id);
-    saveData();
-}
-
-function saveData() {
-    localStorage.setItem('cashflow', JSON.stringify(data));
-    render();
-}
-
-function render() {
-    const list = document.getElementById('list');
+function showData() {
+    let list = document.getElementById('list');
+    let balance = 0;
     list.innerHTML = '';
     
-    let balance = 0;
-    
     data.forEach(item => {
-        if (item.type === 'income') balance += item.amount;
-        else balance -= item.amount;
+        let row = document.createElement('tr');
+        let typeText = item.type == 'income' ? '🐟 Masuk' : '🐾 Keluar';
+        let typeClass = item.type == 'income' ? 'income' : 'expense';
         
-        list.innerHTML += `
-            <div class="item">
-                <span>${item.desc} - Rp ${item.amount.toLocaleString('id-ID')}</span>
-                <span class="${item.type}">${item.type}</span>
-                <button onclick="deleteData(${item.id})">Hapus</button>
-            </div>
+        row.innerHTML = `
+            <td>${item.desc}</td>
+            <td class="${typeClass}">${typeText}</td>
+            <td class="${typeClass}">Rp ${item.amount.toLocaleString('id-ID')}</td>
+            <td><button class="delete-btn" onclick="deleteData(${item.id})">Hapus</button></td>
         `;
+        list.appendChild(row);
+        
+        balance += item.type == 'income' ? item.amount : -item.amount;
     });
     
-    document.getElementById('balance').textContent = 'Rp ' + balance.toLocaleString('id-ID');
+    document.getElementById('balance').innerText = 'Rp ' + balance.toLocaleString('id-ID');
 }
 
-render();
+function deleteData(id) {
+    data = data.filter(item => item.id != id);
+    localStorage.setItem('cashflowKucing', JSON.stringify(data));
+    showData();
+}
+
+showData();

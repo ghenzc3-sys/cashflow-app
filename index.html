@@ -1,1 +1,112 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cashflow</title>
+<style>
+:root{--biru:#2563eb;--biru-tua:#1e40af;--hijau:#10b981}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,var(--biru) 0%, var(--biru-tua) 100%);min-height:100vh;margin:0;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:24px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 16px 40px rgba(0,0,0,.25);text-align:center}
+.logo{font-size:40px;margin-bottom:6px}
+h1{color:var(--biru);font-size:24px;font-weight:900;margin:0 0 18px}
+.label{font-size:13px;color:#6b7280;font-weight:700;margin-bottom:6px}
+.saldo-wrap{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.saldo{flex:1;background:#f3f4f6;border:2px solid var(--biru);border-radius:16px;padding:14px 16px;font-size:24px;font-weight:900;color:var(--biru);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-mata{width:50px;height:50px;border:none;border-radius:16px;background:var(--biru);color:#fff;font-size:22px;cursor:pointer;transition:.2s;flex-shrink:0}
+.btn-mata:active{transform:scale(.95)}
+.input-area{display:flex;gap:8px;margin-bottom:6px;width:100%;}
+#inp{flex:1;min-width:0;border:2px solid var(--biru);border-radius:14px;padding:14px;font-size:16px;font-weight:600;outline:none;transition:.2s}
+#inp:focus{border-color:var(--hijau);box-shadow:0 0 0 3px rgba(16,185,129,.2)}
+.btn-simpan{border:none;border-radius:14px;background:var(--biru);color:#fff;font-weight:800;font-size:15px;padding:0 16px;min-width:80px;flex-shrink:0;cursor:pointer;transition:.2s}
+.btn-simpan:active{transform:scale(.95);background:var(--biru-tua)}
+.hint{font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:16px;text-align:left}
+.btn-detail{display:block;width:100%;border:none;border-radius:14px;background:var(--hijau);color:#fff;font-weight:800;font-size:15px;padding:14px;text-decoration:none;transition:.2s}
+.btn-detail:active{transform:scale(.98)}
+@media(max-width:400px){.box{padding:20px 16px;max-width:100%}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">💸</div>
+  <h1>Cashflow</h1>
+
+  <div class="label">SALDO SAAT INI</div>
+  <div class="saldo-wrap">
+    <div class="saldo" id="saldoTxt">Rp *******</div>
+    <button class="btn-mata" id="mata">👁️</button>
+  </div>
+
+  <div class="input-area">
+    <input id="inp" placeholder="hutang ali 50k" autocomplete="off" inputmode="text">
+    <button class="btn-simpan" id="simpan">Simpan</button>
+  </div>
+  <div class="hint">
+    hutang = +Saldo | bayar = -Saldo<br>
+    dipinjam = -Saldo | kembali = +Saldo<br>
+    Ex: hutang ali 50k | bayar ali 20k | dipinjam suna 10k
+  </div>
+
+  <a href="/detail.html" class="btn-detail">Lihat Detail →</a>
+</div>
+
+<script>
+const KEY='cashflow_v6'; 
+let buka=false;
+const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+
+const K={masuk:['gaji','upah','masuk'],keluar:['beli','bayar','keluar'],hutang:['hutang'],bayar:['bayar','balik'],dipinjam:['dipinjam'],kembali:['kembali']};
+
+const getSaldo=()=>getData().reduce((s,d)=>s+d.m+d.h+d.kmb-d.k-d.b-d.p,0);
+const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+const save=d=>localStorage.setItem(KEY,JSON.stringify(d));
+
+const parse=t=>{
+  const inp=t;
+  t=t.toLowerCase().trim();
+  const m=t.match(/(\d[\d\.]*)(k|jt)?/);const n=Number((m[1]||'0').replace(/\./g,''))*(m[2]==='jt'?1000000:m[2]==='k'?1000:1)||0;
+  if(n<=0)return null;
+  let type='masuk';for(let k in K){if(K[k].some(w=>t.includes(w))){type=k;break}}
+  const nama=t.replace(new RegExp(K[type].join('|'),'g'),'').replace(/[\d\.kjt]+/g,'').trim()||'-';
+  return{type,nama,num:n,inp};
+}
+
+const refresh=()=>{
+  const s=getSaldo();
+  document.getElementById('saldoTxt').innerText=buka?rupiah(s):'Rp *******';
+  document.getElementById('mata').innerText=buka?'🙈':'👁️';
+}
+document.getElementById('mata').onclick=()=>{buka=!buka;refresh()};
+
+document.getElementById('simpan').onclick=()=>{
+  const r=parse(document.getElementById('inp').value);
+  if(!r)return alert('Format: keyword nama angka\nEx: dipinjam suna 10k');
+  const d=getData();
+  
+  // 1. Mapping Item Baru Sesuai Permintaan Kamu
+  const label = {
+    masuk: /gaji|upah/.test(r.inp.toLowerCase())? 'gaji' : 'masuk',
+    keluar: 'keluar',
+    hutang: 'hutang',
+    bayar: 'bayar hutang', // <-- Jadi 'bayar hutang'
+    dipinjam: 'dipinjam', 
+    kembali: 'kembali'
+  };
+
+  const i={t:new Date().toLocaleDateString('id-ID'),n:r.nama,m:0,k:0,h:0,p:0,b:0,kmb:0,it:label[r.type]};
+  if(r.type==='masuk')i.m=r.num;
+  if(r.type==='keluar')i.k=r.num;
+  if(r.type==='hutang')i.h=r.num;
+  if(r.type==='bayar')i.b=r.num;
+  if(r.type==='dipinjam')i.p=r.num;
+  if(r.type==='kembali')i.kmb=r.num;
+  d.push(i);save(d);document.getElementById('inp').value='';if(buka)refresh();
+  navigator.vibrate?.(50);
+}
+document.getElementById('inp').onkeypress=e=>{if(e.key==='Enter')document.getElementById('simpan').click()};
+refresh();
+</script>
+</body>
+</html>

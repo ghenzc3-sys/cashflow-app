@@ -1,1 +1,78 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cashflow</title>
+<style>
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#2563eb,#0ea5e9);margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:28px;padding:28px;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.25);text-align:center}
+h1{font-size:24px;font-weight:900;color:#2563eb;margin:0 0 18px}
+.saldo{border:2.5px solid #0ea5e9;border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:#2563eb;background:#f0f9ff;margin-bottom:18px}
+.input{width:100%;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;margin-bottom:8px}
+.input.error{border-color:#ef4444;background:#fef2f2}
+.input.success{border-color:#10b981;background:#f0fdf4}
+.btn{width:100%;background:#2dd4bf;color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px}
+.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px}
+.notif.error{color:#ef4444}
+.notif.success{color:#10b981}
+.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>💵 Cashflow</h1>
+  <div class="saldo" id="saldo">Rp *******</div>
+  <input class="input" id="cat" placeholder="beli cilok 5000">
+  <button class="btn" id="simpan">Simpan</button>
+  <div class="notif" id="notif"></div>
+  <div class="hint">Masuk: gaji, upah, dapat, hutang+nama<br>Keluar: beli, bayar+nama, nyaur+nama, jajan</div>
+</div>
+<script>
+const KEY='cashflow_v135';
+let showSaldo=false;
+const KEYWORDS={masuk:['gaji','upah','dapat'],masukNama:['hutang','kembali'],keluar:['beli','jajan'],keluarNama:['bayar','nyaur','dipinjam']};
+
+const showNotif=(msg,type)=>{
+  document.getElementById('notif').textContent=msg;
+  document.getElementById('notif').className='notif '+type;
+  document.getElementById('cat').className='input '+type;
+  setTimeout(()=>{document.getElementById('notif').textContent='';document.getElementById('cat').className='input';},2500);
+}
+
+const parseStrict=(txt)=>{
+  txt=txt.trim();
+  const lower=txt.toLowerCase();
+  const angka=lower.match(/\d+/g);
+  if(!angka) return {err:'Nominal gak ketemu bang'};
+  const jml=Number(angka.join(''));
+  const key=lower.replace(/\d+/g,'').trim().split(' ')[0];
+  const sisa=lower.replace(/\d+/g,'').trim().split(' ').slice(1).join(' ');
+  if(KEYWORDS.masuk.includes(key)) return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+  if(KEYWORDS.masukNama.includes(key)){if(!sisa) return {err:`${key} wajib +nama`};return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};}
+  if(KEYWORDS.keluar.includes(key)) return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+  if(KEYWORDS.keluarNama.includes(key)){if(!sisa) return {err:`${key} wajib +nama/tujuan`};return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};}
+  return {err:'Keyword tidak valid'};
+}
+
+const renderSaldo=()=>{
+  const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  document.getElementById('saldo').textContent=showSaldo?`Rp ${saldo.toLocaleString('id-ID')}`:'Rp *******';
+}
+renderSaldo();
+
+document.getElementById('simpan').onclick=()=>{
+  const txt=document.getElementById('cat').value.trim();
+  const res=parseStrict(txt);
+  if(res.err){showNotif(res.err,'error');return;}
+  const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+  data.push({t:new Date().toLocaleDateString('id-ID'),ket:res.ket,c:res.cat,n:'',jml:res.jml});
+  localStorage.setItem(KEY,JSON.stringify(data));
+  showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success');
+  document.getElementById('cat').value='';
+  renderSaldo();
+}
+</script>
+</html>

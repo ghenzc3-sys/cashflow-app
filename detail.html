@@ -25,7 +25,7 @@ thead{background:#2563eb;color:#fff;font-weight:600}
 tbody tr{border-bottom:1px solid #f3f4f6}
 tfoot{background:#1e3a8a;color:#fff;font-weight:800}
 tfoot td{padding:12px}
-tfoot td:last-child{text-align:right;padding-right:20px} /* Biar angka Sisa ke kanan */
+tfoot td:last-child{text-align:right;padding-right:20px}
 </style>
 </head>
 <body>
@@ -50,7 +50,7 @@ tfoot td:last-child{text-align:right;padding-right:20px} /* Biar angka Sisa ke k
     </table>
   </div>
   <div style="margin-top:12px">
-    <a href="index.html" class="btn btn-kembali">← Kembali</a>
+    <button class="btn btn-kembali" onclick="window.location.href='/index.html'">← Kembali</button> <!-- KUNCI: PAKAI / -->
   </div>
 </div>
 <script>
@@ -59,22 +59,20 @@ const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
 
 function load() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  const tb = document.querySelector('#tbl tbody'); 
+  const tb = document.querySelector('#tbl tbody');
   tb.innerHTML='';
   let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
 
   data.forEach((d,i)=>{
-    // Rumus bener: Hutang+ Minjemin-
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.hutang||0) - (d.keluar||0) - (d.minjemin||0) - (d.dikembalikan||0);
     totalMasuk += (d.masuk||0) + (d.pengembalian||0);
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
-    totalHutang += d.hutang||0; 
+    totalHutang += d.hutang||0;
     totalPinjam += d.minjemin||0;
 
     tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
   });
 
-  // INI KUNCINYA: colspan="10" biar ngegabung 10 kolom kiri
   document.getElementById('barisTotal').innerHTML = `
     <tr>
       <td colspan="10" style="text-align:left;padding-left:20px">TOTAL</td>
@@ -86,7 +84,7 @@ function load() {
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
   document.getElementById('tHutang').innerText = rupiah(totalHutang);
   document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
-  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
+  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam); // RUMUS LAMA: Total Hutang - Minjemin
 }
 
 function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }

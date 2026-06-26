@@ -5,17 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cashflow</title>
 <style>
-body{font-family:Segoe UI,Arial;background:#eef2ff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#fff;padding:40px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:400px;text-align:center}
-h1{color:#1d4ed8;font-size:32px;margin:0 0 10px}
-.emoji{font-size:56px;margin-bottom:10px}
-.saldo-wrap{display:flex;gap:8px;margin:15px 0}
+*{box-sizing:border-box}
+body{font-family:Segoe UI,Arial;background:#eef2ff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:16px}
+.box{background:#fff;padding:32px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;max-width:420px;text-align:center}
+h1{color:#1d4ed8;font-size:28px;margin:0 0 8px}
+.emoji{font-size:48px;margin-bottom:8px}
+.saldo-wrap{display:flex;gap:8px;margin:12px 0}
 .saldo-box{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:18px;font-weight:700;color:#2563eb}
-.btn-icon{width:48px;border:none;border-radius:12px;background:#2563eb;color:#fff;font-size:22px;cursor:pointer}
+.btn-icon{width:46px;border:none;border-radius:12px;background:#2563eb;color:#fff;font-size:20px;cursor:pointer}
 .input-wrap{display:flex;gap:8px;margin-bottom:8px}
 #inputData{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:15px}
-.btn{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-weight:700;cursor:pointer}
-.btn-hijau{background:#10b981;width:100%;margin-top:15px;font-size:16px}
+.btn{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+.btn-hijau{background:#10b981;width:100%;margin-top:12px;font-size:16px}
 .keyword{font-size:12px;color:#6b7280;margin-bottom:10px;font-weight:600}
 </style>
 </head>
@@ -35,164 +36,41 @@ h1{color:#1d4ed8;font-size:32px;margin:0 0 10px}
     <div class="keyword">Keyword WAJIB: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
     <button class="btn btn-hijau" id="btnDetail">Detail</button>
   </div>
-
 <script>
 const KEY = 'cashflow_data_v1';
 let buka = false;
 const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
 const KEYWORDS = ['gaji', 'upah', 'beli', 'bayar', 'hutang', 'minjemin', 'pinjemin', 'kembali'];
-
-// RUMUS SALDO FINAL: SEMUA MASUK - SEMUA KELUAR
 function getSaldo() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  return data.reduce((s,d) => s
-    + (d.masuk||0)
-    + (d.pengembalian||0)
-    + (d.minjemin||0)
-    - (d.keluar||0)
-    - (d.hutang||0)
-    - (d.dikembalikan||0), 0);
+  return data.reduce((s,d) => s + (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0), 0);
 }
-
 function refreshSaldo() {
   const s = getSaldo();
   document.getElementById('saldoText').innerText = buka? rupiah(s) : 'Rp *******';
   document.getElementById('btnMata').innerText = buka? '🙈' : '👁️';
 }
-
 document.getElementById('btnMata').onclick = () => { buka =!buka; refreshSaldo(); };
-
 document.getElementById('btnSimpan').onclick = () => {
   const txt = document.getElementById('inputData').value.toLowerCase().trim();
   if(!txt) return alert('Isi dulu bang');
-
-  const adaKeyword = KEYWORDS.some(k => txt.includes(k));
-  if (!adaKeyword) {
-    return alert('Gagal Simpan! \n\nWajib pake keyword: \ngaji, upah, beli, bayar, hutang, minjemin, kembali \n\nContoh: gaji 50000');
-  }
-
+  if (!KEYWORDS.some(k => txt.includes(k))) return alert('Gagal Simpan!\n\nWajib pake keyword: gaji, upah, beli, bayar, hutang, minjemin, kembali\nContoh: gaji 50000');
   const num = Number((txt.match(/(\d[\d\.]*)/)||[0,'0'])[1].replace(/\./g,'')) || 0;
   if(num<=0) return alert('Kasih angka. Ex: gaji 50000');
-
   let j='masuk';
   if(txt.includes('beli')||txt.includes('bayar')) j='keluar';
   else if(txt.includes('hutang')) j='hutang';
   else if(txt.includes('minjemin')||txt.includes('pinjemin')) j='minjemin';
   else if(txt.includes('kembali')) j=txt.includes('dikembali')?'dikembalikan':'pengembalian';
   else if(txt.includes('gaji')||txt.includes('upah')) j='masuk';
-
   const item = txt.replace(/[\d\.]+/g,'').trim() || j;
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  data.push({
-    tanggal:new Date().toISOString().split('T')[0],
-    item,
-    nama:'-',
-    masuk:j==='masuk'?num:0,
-    keluar:j==='keluar'?num:0,
-    hutang:j==='hutang'?num:0,
-    minjemin:j==='minjemin'?num:0,
-    dikembalikan:j==='dikembalikan'?num:0,
-    pengembalian:j==='pengembalian'?num:0
-  });
+  data.push({tanggal:new Date().toISOString().split('T')[0], item, nama:'-', masuk:j==='masuk'?num:0, keluar:j==='keluar'?num:0, hutang:j==='hutang'?num:0, minjemin:j==='minjemin'?num:0, dikembalikan:j==='dikembalikan'?num:0, pengembalian:j==='pengembalian'?num:0});
   localStorage.setItem(KEY, JSON.stringify(data));
   document.getElementById('inputData').value='';
   if(buka) refreshSaldo();
   alert('Tersimpan '+item+' '+rupiah(num));
 };
-
-document.getElementById('btnDetail').onclick = () => location.href='detail.html';
-document.getElementById('inputData').onkeypress = e => { if(e.key==='Enter') document.getElementById('btnSimpan').click(); };
-refreshSaldo();
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cashflow</title>
-<style>
-body{font-family:Segoe UI,Arial;background:#eef2ff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#fff;padding:40px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:400px;text-align:center}
-h1{color:#1d4ed8;font-size:32px;margin:0 0 10px}
-.emoji{font-size:56px;margin-bottom:10px}
-.saldo-wrap{display:flex;gap:8px;margin:15px 0}
-.saldo-box{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:18px;font-weight:700;color:#2563eb}
-.btn-icon{width:48px;border:none;border-radius:12px;background:#2563eb;color:#fff;font-size:22px;cursor:pointer}
-.input-wrap{display:flex;gap:8px;margin-bottom:8px}
-#inputData{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:15px}
-.btn{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 20px;font-weight:700;cursor:pointer}
-.btn-hijau{background:#10b981;width:100%;margin-top:15px;font-size:16px}
-.keyword{font-size:12px;color:#6b7280;margin-bottom:10px}
-</style>
-</head>
-<body>
-  <div class="box">
-    <h1>Cashflow</h1>
-    <div class="emoji">😺</div>
-    <label style="font-weight:700">Saldo</label>
-    <div class="saldo-wrap">
-      <div class="saldo-box" id="saldoText">Rp *******</div>
-      <button class="btn-icon" id="btnMata">👁️</button>
-    </div>
-    <div class="input-wrap">
-      <input id="inputData" placeholder="Contoh: gaji 50000">
-      <button class="btn" id="btnSimpan">Simpan</button>
-    </div>
-    <div class="keyword">Keyword WAJIB: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
-    <button class="btn btn-hijau" id="btnDetail">Detail</button>
-  </div>
-
-<script>
-const KEY = 'cashflow_data_v1';
-let buka = false;
-const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
-
-// DAFTAR KEYWORD YANG BOLEH
-const KEYWORDS = ['gaji', 'upah', 'beli', 'bayar', 'hutang', 'minjemin', 'pinjemin', 'kembali'];
-
-function getSaldo() {
-  const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  return data.reduce((s,d) => s + (d.masuk||0) - (d.keluar||0) - (d.hutang||0) + (d.minjemin||0) - (d.dikembalikan||0) + (d.pengembalian||0), 0);
-}
-
-function refreshSaldo() {
-  const s = getSaldo();
-  document.getElementById('saldoText').innerText = buka? rupiah(s) : 'Rp *******';
-  document.getElementById('btnMata').innerText = buka? '🙈' : '👁️';
-}
-
-document.getElementById('btnMata').onclick = () => { buka =!buka; refreshSaldo(); };
-
-document.getElementById('btnSimpan').onclick = () => {
-  const txt = document.getElementById('inputData').value.toLowerCase().trim();
-  if(!txt) return alert('Isi dulu bang');
-
-  // INI BAGIAN VALIDASI BARU
-  const adaKeyword = KEYWORDS.some(k => txt.includes(k));
-  if (!adaKeyword) {
-    return alert('Gagal Simpan! \n\nWajib pake keyword: \ngaji, upah, beli, bayar, hutang, minjemin, kembali \n\nContoh: gaji 50000');
-  }
-
-  const num = Number((txt.match(/(\d[\d\.]*)/)||[0,'0'])[1].replace(/\./g,'')) || 0;
-  if(num<=0) return alert('Kasih angka. Ex: gaji 50000');
-
-  let j='masuk';
-  if(txt.includes('beli')||txt.includes('bayar')) j='keluar';
-  else if(txt.includes('hutang')) j='hutang';
-  else if(txt.includes('minjemin')||txt.includes('pinjemin')) j='minjemin';
-  else if(txt.includes('kembali')) j=txt.includes('dikembali')?'dikembalikan':'pengembalian';
-  else if(txt.includes('gaji')||txt.includes('upah')) j='masuk';
-
-  const item = txt.replace(/[\d\.]+/g,'').trim() || j;
-  const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  data.push({tanggal:new Date().toISOString().split('T')[0], item, nama:'-', masuk:j==='masuk'||j==='pengembalian'?num:0, keluar:j==='keluar'||j==='dikembalikan'?num:0, hutang:j==='hutang'?num:0, minjemin:j==='minjemin'?num:0, dikembalikan:j==='dikembalikan'?num:0, pengembalian:j==='pengembalian'?num:0});
-  localStorage.setItem(KEY, JSON.stringify(data));
-  document.getElementById('inputData').value='';
-  if(buka) refreshSaldo();
-  alert('Tersimpan '+item+' '+rupiah(num));
-};
-
 document.getElementById('btnDetail').onclick = () => location.href='detail.html';
 document.getElementById('inputData').onkeypress = e => { if(e.key==='Enter') document.getElementById('btnSimpan').click(); };
 refreshSaldo();

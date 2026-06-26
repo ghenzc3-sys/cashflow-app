@@ -5,61 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detail Cashflow</title>
 <style>
-body{font-family:Segoe UI,Arial;background:#eef2ff;margin:0;padding:20px}
-.wrap{max-width:1100px;margin:0 auto}
-h1{color:#1d4ed8;text-align:center;margin:0 0 16px;font-size:24px}
+body{font-family:Segoe UI,Arial;background:#f3f4f6;margin:0;padding:20px}
+.wrap{max-width:1200px;margin:0 auto}
+.header{background:#fff;border-radius:12px;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+h1{color:#2563eb;text-align:center;margin:0;font-size:26px;font-weight:800}
+.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px}
+.btn-kembali{background:#3b82f6;color:#fff}
+.btn-kosong{background:#ef4444;color:#fff}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.card{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.06);border:1px solid #e5e7eb}
-.card h3{margin:0;font-size:12px;color:#6b7280;font-weight:600}
-.card b{display:block;margin-top:4px;font-size:16px;color:#111827;font-weight:700}
-.total-card{background:#2563eb;color:#fff;grid-column:1/-1}
-.total-card h3,.total-card b{color:#fff;font-size:18px}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.06);margin-top:12px}
-th,td{padding:10px;border-bottom:1px solid #f3f4f6;font-size:13px;text-align:center}
-th{background:#2563eb;color:#fff;font-weight:600}
-.btn{padding:10px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700;margin-right:8px;font-size:14px}
-.btn-biru{background:#2563eb;color:#fff}
-.btn-merah{background:#ef4444;color:#fff}
+.card{border-radius:12px;padding:16px;text-align:center;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.card h3{margin:0;font-size:13px;font-weight:600;opacity:.9}
+.card b{display:block;margin-top:6px;font-size:18px;font-weight:800}
+.biru{background:#2563eb}
+.merah{background:#ef4444}
 .table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+th,td{padding:10px;font-size:13px;text-align:center;white-space:nowrap}
+thead{background:#2563eb;color:#fff;font-weight:600}
+tbody tr{border-bottom:1px solid #f3f4f6}
+tfoot td{background:#2563eb;color:#fff;font-weight:700;padding:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Detail Cashflow</h1>
+  <div class="header">
+    <h1>Detail Cashflow</h1>
+    <button class="btn btn-kosong" onclick="kosong()">Kosongkan</button>
+  </div>
+
   <div class="cards">
-    <div class="card"><h3>Saldo Akhir</h3><b id="sAkhir">Rp 0</b></div>
-    <div class="card"><h3>Total Masuk</h3><b id="tMasuk">Rp 0</b></div>
-    <div class="card"><h3>Total Keluar</h3><b id="tKeluar">Rp 0</b></div>
-    <div class="card"><h3>Total Hutang</h3><b id="tHutang">Rp 0</b></div>
-    <div class="card"><h3>Dipinjamkan</h3><b id="tPinjam">Rp 0</b></div>
-    <div class="card"><h3>Sisa Hutang</h3><b id="sHutang">Rp 0</b></div>
-    <div class="card total-card"><h3>TOTAL AKHIR</h3><b id="tTotal">Rp 0</b></div>
+    <div class="card biru"><h3>Saldo Akhir</h3><b id="sAkhir">Rp 0</b></div>
+    <div class="card biru"><h3>Total Masuk</h3><b id="tMasuk">Rp 0</b></div>
+    <div class="card merah"><h3>Total Keluar</h3><b id="tKeluar">Rp 0</b></div>
+    <div class="card merah"><h3>Total Hutang</h3><b id="tHutang">Rp 0</b></div>
+    <div class="card biru"><h3>Dipinjam/Minjemin</h3><b id="tPinjam">Rp 0</b></div>
+    <div class="card merah"><h3>Sisa Hutang</h3><b id="sHutang">Rp 0</b></div>
   </div>
-  <div style="margin-bottom:12px">
-    <button class="btn btn-biru" onclick="location.href='index.html'">Kembali</button>
-    <button class="btn btn-merah" onclick="kosong()">Hapus Semua</button>
-  </div>
+
   <div class="table-wrap">
     <table id="tbl">
-      <thead><tr><th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th><th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th><th>Masuk</th><th>Keluar</th><th>Saldo</th></tr></thead>
+      <thead>
+        <tr>
+          <th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th>
+          <th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th>
+          <th>Masuk</th><th>Keluar</th><th>Sisa</th>
+        </tr>
+      </thead>
       <tbody></tbody>
+      <tfoot><tr><td colspan="9">TOTAL</td><td id="tTotal">Rp 0</td><td></td></tr></tfoot>
     </table>
   </div>
+  <div style="margin-top:12px">
+    <button class="btn btn-kembali" onclick="location.href='index.html'">← Kembali</button>
+  </div>
 </div>
+
 <script>
 const KEY = 'cashflow_data_v1';
 const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
+
 function load() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
   const tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
   let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
+
   data.forEach((d,i)=>{
+    // RUMUS FINAL YANG BENER: SEMUA MASUK - SEMUA KELUAR
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0);
+    
     totalMasuk += (d.masuk||0) + (d.pengembalian||0);
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
-    totalHutang += d.hutang||0; totalPinjam += d.minjemin||0;
-    tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
+    totalHutang += d.hutang||0;
+    totalPinjam += d.minjemin||0;
+
+    tb.innerHTML += `<tr>
+      <td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td>
+      <td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td>
+      <td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td>
+    </tr>`;
   });
+
   document.getElementById('sAkhir').innerText = rupiah(saldo);
   document.getElementById('tMasuk').innerText = rupiah(totalMasuk);
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
@@ -68,7 +93,7 @@ function load() {
   document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
   document.getElementById('tTotal').innerText = rupiah(saldo);
 }
-function kosong(){ if(confirm('Hapus semua data?')){ localStorage.removeItem(KEY); load(); }
+function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }
 load();
 </script>
 </body>

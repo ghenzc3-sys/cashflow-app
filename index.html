@@ -3,175 +3,204 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Input Cashflow</title>
+  <title>Cashflow</title>
   <style>
     body { 
       font-family: Arial, sans-serif; 
       background: #f4f6f8; 
-      padding: 20px; 
-      margin: 0; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+   .box {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
     }
     h1 { 
-      text-align: center; 
-      color: #2563eb; 
-      font-size: 32px; 
+      color: #1e40af; 
+      font-size: 28px; 
       font-weight: 900; 
-      margin: 0 0 20px 0; 
-      padding: 16px 0; 
-      background: white; 
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+      margin: 0 0 10px 0; 
     }
-    .form-box {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 0 auto 20px auto;
+   .emoji { font-size: 48px; margin-bottom: 10px; }
+    label { 
+      font-weight: bold; 
+      color: #333; 
+      display: block; 
+      margin: 15px 0 8px 0; 
     }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    label {
-      font-size: 14px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 4px;
-      display: block;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-    .btn-group {
+   .saldo-wrap {
       display: flex;
-      gap: 10px;
-      margin-top: 15px;
-      grid-column: span 2;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 15px;
     }
-    .btn {
+   .saldo-box {
       flex: 1;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
       padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+   .btn-icon {
+      background: #2563eb;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      font-size: 22px;
+    }
+   .input-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #inputData {
+      flex: 1;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+    }
+   .btn-simpan {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 14px;
     }
-    .btn-simpan { background: #2563eb; color: white; }
-    .btn-detail { background: #059669; color: white; }
-    .btn-reset { background: #6b7280; color: white; }
-    
-    @media (max-width: 768px) {
-      .form-grid { grid-template-columns: 1fr; }
-      .btn-group { grid-column: span 1; flex-direction: column; }
-      h1 { font-size: 24px; }
+   .keyword {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+      margin-bottom: 15px;
+    }
+   .btn-detail {
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 30px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
     }
   </style>
 </head>
 <body>
-  <h1>Input Cashflow</h1>
-
-  <div class="form-box">
-    <div class="form-grid">
-      <div>
-        <label>Tanggal</label>
-        <input type="date" id="tanggal">
-      </div>
-      <div>
-        <label>Item</label>
-        <input type="text" id="item" placeholder="Contoh: Gaji, Makan">
-      </div>
-      <div>
-        <label>Nama</label>
-        <input type="text" id="nama" placeholder="Contoh: Budi">
-      </div>
-      <div>
-        <label>Jenis Transaksi</label>
-        <select id="jenis">
-          <option value="masuk">Masuk</option>
-          <option value="keluar">Keluar</option>
-          <option value="hutang">Hutang</option>
-          <option value="minjemin">Minjemin</option>
-          <option value="dikembalikan">Dikembalikan</option>
-          <option value="pengembalian">Pengembalian</option>
-        </select>
-      </div>
-      <div style="grid-column: span 2;">
-        <label>Nominal</label>
-        <input type="number" id="nominal" placeholder="0" min="0">
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-simpan" onclick="simpanData()">Simpan</button>
-        <button class="btn btn-reset" onclick="resetForm()">Reset</button>
-        <button class="btn btn-detail" onclick="window.location.href='detail.html'">Lihat Detail →</button>
-      </div>
+  <div class="box">
+    <h1>Cashflow</h1>
+    <div class="emoji">😺</div>
+    
+    <label>Saldo</label>
+    <div class="saldo-wrap">
+      <div class="saldo-box" id="saldoText">Rp *******</div>
+      <button class="btn-icon" onclick="toggleSaldo()">👁️</button>
     </div>
+
+    <div class="input-wrap">
+      <input type="text" id="inputData" placeholder="isi disini">
+      <button class="btn-simpan" onclick="simpanData()">Simpan</button>
+    </div>
+    <div class="keyword">Keyword: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
+
+    <button class="btn-detail" onclick="window.location.href='detail.html'">Detail</button>
   </div>
 
   <script>
-    // Auto isi tanggal hari ini
-    document.getElementById('tanggal').valueAsDate = new Date();
+    let showSaldo = false;
 
     function formatRupiah(num) {
       return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
     }
 
-    function simpanData() {
-      const tanggal = document.getElementById('tanggal').value;
-      const item = document.getElementById('item').value.trim();
-      const nama = document.getElementById('nama').value.trim();
-      const jenis = document.getElementById('jenis').value;
-      const nominal = Number(document.getElementById('nominal').value) || 0;
+    function hitungSaldo() {
+      const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
+      let saldo = 0;
+      data.forEach(d => {
+        saldo += (d.masuk || 0) - (d.keluar || 0) - (d.hutang || 0) + (d.minjemin || 0) - (d.dikembalikan || 0) + (d.pengembalian || 0);
+      });
+      return saldo;
+    }
 
-      if (!tanggal || !item || nominal <= 0) {
-        alert('Tanggal, Item, dan Nominal wajib diisi & > 0');
+    function updateSaldo() {
+      const saldo = hitungSaldo();
+      document.getElementById('saldoText').textContent = showSaldo? formatRupiah(saldo) : 'Rp *******';
+    }
+
+    function toggleSaldo() {
+      showSaldo =!showSaldo;
+      updateSaldo();
+    }
+
+    function simpanData() {
+      const text = document.getElementById('inputData').value.trim().toLowerCase();
+      if (!text) {
+        alert('Isi dulu bang');
         return;
       }
 
-      // Ambil data lama dari localStorage dengan key 'cashflowData'
+      // Ambil angka dari teks
+      const angkaMatch = text.match(/(\d[\d\.]*)/);
+      const nominal = angkaMatch? Number(angkaMatch[1].replace(/\./g, '')) : 0;
+
+      if (nominal <= 0) {
+        alert('Harus ada nominal. Contoh: gaji 50000');
+        return;
+      }
+
+      // Deteksi keyword
+      let jenis = 'masuk';
+      if (text.includes('beli') || text.includes('bayar') || text.includes('keluar')) jenis = 'keluar';
+      else if (text.includes('hutang')) jenis = 'hutang';
+      else if (text.includes('minjemin') || text.includes('pinjemin')) jenis = 'minjemin';
+      else if (text.includes('kembali') || text.includes('balik')) {
+        if (text.includes('dikembali')) jenis = 'dikembalikan';
+        else jenis = 'pengembalian';
+      }
+      else if (text.includes('gaji') || text.includes('upah')) jenis = 'masuk';
+
+      // Ambil item = teks tanpa angka
+      const item = text.replace(/[\d\.]+/g, '').trim();
+
+      // Ambil data lama
       const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
 
-      // Bikin object baru sesuai key yang dibaca detail.html
-      const newData = {
-        tanggal: tanggal,
-        item: item,
-        nama: nama,
-        masuk: jenis === 'masuk' || jenis === 'pengembalian' ? nominal : 0,
-        keluar: jenis === 'keluar' || jenis === 'dikembalikan' ? nominal : 0,
-        hutang: jenis === 'hutang' ? nominal : 0,
-        minjemin: jenis === 'minjemin' ? nominal : 0,
-        dikembalikan: jenis === 'dikembalikan' ? nominal : 0,
-        pengembalian: jenis === 'pengembalian' ? nominal : 0
-      };
+      // Tambah data baru format sama kayak detail.html
+      data.push({
+        tanggal: new Date().toISOString().split('T')[0],
+        item: item || jenis,
+        nama: '-',
+        masuk: jenis === 'masuk' || jenis === 'pengembalian'? nominal : 0,
+        keluar: jenis === 'keluar' || jenis === 'dikembalikan'? nominal : 0,
+        hutang: jenis === 'hutang'? nominal : 0,
+        minjemin: jenis === 'minjemin'? nominal : 0,
+        dikembalikan: jenis === 'dikembalikan'? nominal : 0,
+        pengembalian: jenis === 'pengembalian'? nominal : 0
+      });
 
-      data.push(newData);
-      
-      // Simpan lagi dengan key 'cashflowData' PENTING!
+      // Simpan dengan key 'cashflowData' Biar nyambung ke detail.html
       localStorage.setItem('cashflowData', JSON.stringify(data));
       
-      alert('Data berhasil disimpan!');
-      resetForm();
+      document.getElementById('inputData').value = '';
+      updateSaldo();
+      alert('Tersimpan: ' + item + ' + formatRupiah(nominal));
     }
 
-    function resetForm() {
-      document.getElementById('item').value = '';
-      document.getElementById('nama').value = '';
-      document.getElementById('nominal').value = '';
-      document.getElementById('jenis').value = 'masuk';
-      document.getElementById('tanggal').valueAsDate = new Date();
-    }
+    // Load pertama kali
+    updateSaldo();
   </script>
 </body>
 </html>

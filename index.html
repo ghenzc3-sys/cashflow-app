@@ -17,7 +17,7 @@ h1{color:#1d4ed8;font-size:32px;margin:0 0 12px;font-weight:800}
 .input-wrap{display:flex;gap:10px;margin-bottom:10px}
 #inputData{flex:1;border:2px solid #2563eb;border-radius:14px;padding:14px;font-size:16px}
 .btn{background:#2563eb;color:#fff;border:none;border-radius:14px;padding:14px 20px;font-weight:700;cursor:pointer;font-size:15px}
-.btn-hijau{background:#10b981;width:100%;margin-top:16px;font-size:17px;padding:16px}
+.btn-hijau{background:#10b981;width:100%;margin-top:16px;font-size:17px;padding:16px;cursor:pointer}
 .keyword{font-size:12px;color:#6b7280;margin-top:8px;font-weight:600}
 </style>
 </head>
@@ -35,7 +35,7 @@ h1{color:#1d4ed8;font-size:32px;margin:0 0 12px;font-weight:800}
       <button class="btn" id="btnSimpan">Simpan</button>
     </div>
     <div class="keyword">Keyword WAJIB: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
-    <button class="btn btn-hijau" id="btnKeDetail">Detail</button> <!-- ID UDAH DIGANTI -->
+    <button class="btn btn-hijau" onclick="window.location.href='detail.html'">Detail</button> <!-- INI KUNCINYA -->
   </div>
 
 <script>
@@ -77,9 +77,6 @@ document.getElementById('btnSimpan').onclick = () => {
   if(buka) refreshSaldo();
   alert('Tersimpan '+item+' '+rupiah(num));
 };
-
-// INI YANG DIBENERIN: ID TOMBOL DETAIL
-document.getElementById('btnKeDetail').onclick = () => location.href='detail.html';
 
 document.getElementById('inputData').onkeypress = e => { if(e.key==='Enter') document.getElementById('btnSimpan').click(); };
 refreshSaldo();

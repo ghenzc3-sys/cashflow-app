@@ -14,12 +14,14 @@
    .saldo-wrap{display:flex;gap:10px;align-items:center;margin-bottom:20px}
    .saldo-box{flex:1;border:2px solid #2563eb;border-radius:14px;padding:14px;font-size:20px;font-weight:800;color:#2563eb;text-align:center;min-height:28px}
    .btn-icon{background:#2563eb;border:none;border-radius:14px;width:52px;height:52px;cursor:pointer;font-size:24px;display:flex;align-items:center;justify-content:center;color:white}
-   .btn-icon:active{background:#1e40af}
+   .btn-icon:hover{background:#1e40af}
    .input-wrap{display:flex;gap:10px;align-items:center}
-   #inputData{flex:1;border:2px solid #2563eb;border-radius:14px;padding:14px;font-size:16px}
+    #inputData{flex:1;border:2px solid #2563eb;border-radius:14px;padding:14px;font-size:16px}
    .btn-simpan{background:#2563eb;color:white;border:none;border-radius:14px;padding:14px 24px;font-weight:bold;cursor:pointer;font-size:16px}
+   .btn-simpan:hover{background:#1e40af}
    .keyword{font-size:13px;color:#6b7280;margin:8px 0 20px 0}
    .btn-detail{background:#10b981;color:white;border:none;border-radius:14px;padding:14px 30px;font-weight:bold;font-size:18px;cursor:pointer;width:100%}
+   .btn-detail:hover{background:#059669}
   </style>
 </head>
 <body>
@@ -40,66 +42,112 @@
   </div>
 
 <script>
-(() => {
-  const KEY = 'cashflowData'; // KUNCI: HARUS SAMA DENGAN DETAIL.HTML
-  let showSaldo = false;
+  // KUNCI UTAMA: Nama key harus sama dengan detail.html
+  const STORAGE_KEY = 'cashflowData';
+  let saldoTerlihat = false;
 
-  const $ = id => document.getElementById(id);
-  const formatRupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
-
-  function hitungSaldo() {
-    const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-    return data.reduce((s,d) => s + (Number(d.masuk)||0) - (Number(d.keluar)||0) - (Number(d.hutang)||0) + (Number(d.minjemin)||0) - (Number(d.dikembalikan)||0) + (Number(d.pengembalian)||0), 0);
+  function formatRupiah(angka) {
+    return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
   }
 
-  function renderSaldo() {
-    const saldo = hitungSaldo();
-    $('saldoText').textContent = showSaldo ? formatRupiah(saldo) : 'Rp *******';
-    $('btnMata').textContent = showSaldo ? '🙈' : '👁️';
+  function hitungTotalSaldo() {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let total = 0;
+    for (let d of data) {
+      total += (Number(d.masuk) || 0);
+      total -= (Number(d.keluar) || 0);
+      total -= (Number(d.hutang) || 0);
+      total += (Number(d.minjemin) || 0);
+      total -= (Number(d.dikembalikan) || 0);
+      total += (Number(d.pengembalian) || 0);
+    }
+    return total;
   }
 
-  function simpanData() {
-    const text = $('inputData').value.trim().toLowerCase();
-    if(!text) return alert('Isi dulu bang');
-    const num = (text.match(/(\d[\d\.]*)/) || [0,0])[1].replace(/\./g,'');
-    const nominal = Number(num) || 0;
-    if(nominal <= 0) return alert('Harus ada angka. Ex: gaji 50000');
+  function updateTampilanSaldo() {
+    const total = hitungTotalSaldo();
+    const elSaldo = document.getElementById('saldoText');
+    const elMata = document.getElementById('btnMata');
 
-    let jenis='masuk';
-    if(text.includes('beli')||text.includes('bayar')||text.includes('keluar')) jenis='keluar';
-    else if(text.includes('hutang')) jenis='hutang';
-    else if(text.includes('minjemin')||text.includes('pinjemin')) jenis='minjemin';
-    else if(text.includes('kembali')) jenis = text.includes('dikembali')?'dikembalikan':'pengembalian';
-    else if(text.includes('gaji')||text.includes('upah')) jenis='masuk';
-
-    const item = text.replace(/[\d\.]+/g,'').trim() || jenis;
-    const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-    
-    data.push({
-      tanggal:new Date().toISOString().split('T')[0],
-      item,nama:'-',
-      masuk: (jenis==='masuk'||jenis==='pengembalian')?nominal:0,
-      keluar:(jenis==='keluar'||jenis==='dikembalikan')?nominal:0,
-      hutang:jenis==='hutang'?nominal:0,
-      minjemin:jenis==='minjemin'?nominal:0,
-      dikembalikan:jenis==='dikembalikan'?nominal:0,
-      pengembalian:jenis==='pengembalian'?nominal:0
-    });
-    
-    localStorage.setItem(KEY, JSON.stringify(data)); // SIMPAN PAKE KEY BENER
-    $('inputData').value='';
-    renderSaldo(); // Update saldo langsung
-    alert('Tersimpan: ' + item + ' + formatRupiah(nominal));
+    if (saldoTerlihat) {
+      elSaldo.textContent = formatRupiah(total);
+      elMata.textContent = '🙈';
+    } else {
+      elSaldo.textContent = 'Rp *******';
+      elMata.textContent = '👁️';
+    }
   }
 
-  // Event dipasang manual, gak pake onclick di HTML biar gak double
-  $('btnMata').onclick = () => { showSaldo =!showSaldo; renderSaldo(); };
-  $('btnSimpan').onclick = simpanData;
-  $('btnDetail').onclick = () => location.href = 'detail.html';
-  $('inputData').onkeypress = e => { if(e.key==='Enter') simpanData(); };
+  function simpanTransaksi() {
+    const input = document.getElementById('inputData').value.trim().toLowerCase();
+    if (input === '') {
+      alert('Isi dulu bang');
+      return;
+    }
 
-  renderSaldo(); // Load pertama
-})();
+    const angka = input.match(/(\d[\d\.]*)/);
+    const nominal = angka? Number(angka[1].replace(/\./g, '')) : 0;
+    if (nominal <= 0) {
+      alert('Harus ada nominal angka. Contoh: gaji 50000');
+      return;
+    }
+
+    let jenis = 'masuk';
+    if (input.includes('beli') || input.includes('bayar') || input.includes('keluar')) {
+      jenis = 'keluar';
+    } else if (input.includes('hutang')) {
+      jenis = 'hutang';
+    } else if (input.includes('minjemin') || input.includes('pinjemin')) {
+      jenis = 'minjemin';
+    } else if (input.includes('kembali')) {
+      jenis = input.includes('dikembali')? 'dikembalikan' : 'pengembalian';
+    } else if (input.includes('gaji') || input.includes('upah')) {
+      jenis = 'masuk';
+    }
+
+    const namaItem = input.replace(/[\d\.]+/g, '').trim() || jenis;
+    const dataLama = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+    const dataBaru = {
+      tanggal: new Date().toISOString().split('T')[0],
+      item: namaItem,
+      nama: '-',
+      masuk: (jenis === 'masuk' || jenis === 'pengembalian')? nominal : 0,
+      keluar: (jenis === 'keluar' || jenis === 'dikembalikan')? nominal : 0,
+      hutang: (jenis === 'hutang')? nominal : 0,
+      minjemin: (jenis === 'minjemin')? nominal : 0,
+      dikembalikan: (jenis === 'dikembalikan')? nominal : 0,
+      pengembalian: (jenis === 'pengembalian')? nominal : 0
+    };
+
+    dataLama.push(dataBaru);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataLama)); // SIMPAN DISINI
+
+    document.getElementById('inputData').value = '';
+    updateTampilanSaldo();
+    alert('Berhasil simpan: ' + namaItem + ' + formatRupiah(nominal));
+  }
+
+  // Pasang event setelah HTML kebaca semua
+  document.getElementById('btnMata').addEventListener('click', function() {
+    saldoTerlihat =!saldoTerlihat;
+    updateTampilanSaldo();
+  });
+
+  document.getElementById('btnSimpan').addEventListener('click', simpanTransaksi);
+
+  document.getElementById('btnDetail').addEventListener('click', function() {
+    window.location.href = 'detail.html';
+  });
+
+  document.getElementById('inputData').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      simpanTransaksi();
+    }
+  });
+
+  // Jalankan pertama kali
+  updateTampilanSaldo();
 </script>
 </body>
 </html>

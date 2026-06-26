@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Detail Cashflow</title>
+<style>
+:root{--biru:#2563eb;--biru-tua:#1e40af;--hijau:#10b981;--merah:#ef4444}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:#f3f4f6;margin:0;padding:16px}
+.box{background:#fff;border-radius:20px;padding:20px;max-width:1100px;margin:0 auto;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.head h1{font-size:20px;font-weight:900;color:var(--biru);margin:0}
+.head span{font-size:24px}
+.top{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:16px}
+.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:12px;text-align:center}
+.card.l{font-size:12px;font-weight:800;color:#6b7280;margin-bottom:4px}
+.card.v{font-size:18px;font-weight:900;color:var(--biru)}
+.card.merah.v{color:var(--merah)}
+.card.hijau.v{color:var(--hijau)}
+.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid #e5e7eb}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:800px}
+thead{background:var(--biru);color:#fff}
+th,td{padding:10px 8px;text-align:center;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+tbody tr:hover{background:#f9fafb}
+tfoot td{font-weight:900;background:var(--biru);color:#fff}
+.btn-del{border:none;background:var(--merah);color:#fff;border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer}
+.btn-del:active{transform:scale(.95)}
+.btn-head{display:flex;gap:8px;margin-bottom:12px;justify-content:flex-end}
+.btn-head a,.btn-head button{border:none;border-radius:10px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none}
+.btn-reset{background:var(--merah);color:#fff}
+.btn-back{background:var(--biru);color:#fff}
+@media(max-width:768px){.top{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.top{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="head"><span>📊</span><h1>Detail Transaksi</h1></div>
 
+  <div class="top">
+    <div class="card"><div class="l">Saldo Akhir</div><div class="v" id="total">Rp 0</div></div>
+    <div class="card hijau"><div class="l">Masuk</div><div class="v" id="masuk">Rp 0</div></div>
+    <div class="card merah"><div class="l">Keluar</div><div class="v" id="keluar">Rp 0</div></div>
+    <div class="card"><div class="l">Hutang</div><div class="v" id="hutang">Rp 0</div></div>
+    <div class="card"><div class="l">Dipinjamkan</div><div class="v" id="dipinjam">Rp 0</div></div> <!-- Ganti Nama -->
+    <div class="card merah"><div class="l">Sisa Hutang</div><div class="v" id="shutang">Rp 0</div></div>
+    <div class="card hijau"><div class="l">Sisa Piutang</div><div class="v" id="spiutang">Rp 0</div></div>
+  </div>
+
+  <div class="btn-head">
+    <button class="btn-reset" id="kosong">Kosongkan</button>
+    <a href="/" class="btn-back">+ Input</a>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>No</th><th>Tgl</th><th>Item</th><th>Nama</th><th>Masuk</th><th>Keluar</th><th>Hutang</th><th>Dipinjam</th><th>Kembali</th><th>Bayar</th><th>Sisa</th><th></th></tr> <!-- Ganti Nama -->
+      </thead>
+      <tbody id="body"></tbody>
+      <tfoot>
+        <tr><td colspan="11" style="text-align:right">TOTAL SALDO</td><td id="tTotal">Rp 0</td></tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<script>
+const KEY='cashflow_v5'; // WAJIB SAMA KAYA INDEX.HTML
+const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+
+const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+const save=d=>localStorage.setItem(KEY,JSON.stringify(d));
+
+const render=()=>{
+  const d=getData();
+  const body=document.getElementById('body');
+  body.innerHTML='';
+
+  const totalMasuk=d.reduce((s,i)=>s+i.m,0);
+  const totalKeluar=d.reduce((s,i)=>s+i.k,0);
+  const totalHutang=d.reduce((s,i)=>s+i.h,0);
+  const totalDipinjam=d.reduce((s,i)=>s+i.p,0); // <-- Ganti Nama
+  const totalBayar=d.reduce((s,i)=>s+i.b,0);
+  const totalKembali=d.reduce((s,i)=>s+i.kmb,0);
+  const saldoAkhir=d.reduce((s,i)=>s+i.m+i.h+i.kmb-i.k-i.p-i.b,0); // p = dipinjam
+  const sisaHutang=d.reduce((s,i)=>s+i.h-i.b,0);
+  const sisaPiutang=d.reduce((s,i)=>s+i.p-i.kmb,0);
+
+  document.getElementById('masuk').innerText=rupiah(totalMasuk+totalKembali);
+  document.getElementById('keluar').innerText=rupiah(totalKeluar+totalDipinjam+totalBayar);
+  document.getElementById('hutang').innerText=rupiah(totalHutang);
+  document.getElementById('dipinjam').innerText=rupiah(totalDipinjam); // <-- Ganti Nama
+  document.getElementById('shutang').innerText=rupiah(sisaHutang);
+  document.getElementById('spiutang').innerText=rupiah(sisaPiutang);
+  document.getElementById('total').innerText=rupiah(saldoAkhir);
+  document.getElementById('tTotal').innerText=rupiah(saldoAkhir);
+
+  let running=0;
+  d.forEach((i,idx)=>{
+    running+=i.m+i.h+i.kmb-i.k-i.p-i.b;
+    body.insertAdjacentHTML('beforeend',`
+      <tr>
+        <td>${idx+1}</td>
+        <td>${i.t}</td>
+        <td>${i.it}</td> <!-- Item bakal 'dipinjam' -->
+        <td>${i.n}</td>
+        <td>${rupiah(i.m)}</td>
+        <td>${rupiah(i.k)}</td>
+        <td>${rupiah(i.h)}</td>
+        <td>${rupiah(i.p)}</td> <!-- Kolom Dipinjam -->
+        <td>${rupiah(i.kmb||0)}</td>
+        <td>${rupiah(i.b)}</td>
+        <td>${rupiah(running)}</td>
+        <td><button class="btn-del" onclick="hapus(${idx})">X</button></td>
+      </tr>
+    `);
+  });
+}
+
+window.hapus=idx=>{
+  const d=getData();d.splice(idx,1);save(d);render();
+}
+
+document.getElementById('kosong').onclick=()=>{
+  if(confirm('Yakin kosongkan semua data?')){localStorage.removeItem(KEY);render()}
+}
+
+render();
+</script>
+</body>
+</html>

@@ -62,7 +62,6 @@ function load() {
   const tb = document.querySelector('#tbl tbody'); 
   tb.innerHTML='';
   let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
-  let totMinjemin=0, totHutang=0, totDikembali=0, totPengembalian=0;
 
   data.forEach((d,i)=>{
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.hutang||0) - (d.keluar||0) - (d.minjemin||0) - (d.dikembalikan||0);
@@ -70,10 +69,6 @@ function load() {
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
     totalHutang += d.hutang||0; 
     totalPinjam += d.minjemin||0;
-    totMinjemin += d.minjemin||0;
-    totHutang += d.hutang||0;
-    totDikembali += d.dikembalikan||0;
-    totPengembalian += d.pengembalian||0;
 
     tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
   });
@@ -89,11 +84,11 @@ function load() {
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
   document.getElementById('tHutang').innerText = rupiah(totalHutang);
   document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
-  // INI YANG DIBENERIN: dikurangin Dikembalikan, bukan Minjemin
-  document.getElementById('sHutang').innerText = rupiah(totalHutang - totDikembali); 
+  // BALIKIN LAGI KE RUMUS LAMA: Total Hutang - Minjemin
+  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
 }
 
-function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); }
+function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }
 load();
 </script>
 </body>

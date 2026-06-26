@@ -67,7 +67,7 @@ document.getElementById('mata').onclick=()=>{buka=!buka;refresh()};
 
 const parse=t=>{
   t=t.toLowerCase().trim();
-  
+  const m=t.match(/(\d[\d\.]*)(k|jt)?/);const n=Number((m[1]||'0').replace(/\./g,''))*(m[2]==='jt'?1000000:m[2]==='k'?1000:1)||0;
   if(n<=0)return null;
   let type='masuk';for(let k in K){if(K[k].some(w=>t.includes(w))){type=k;break}}
   const nama=t.replace(new RegExp(K[type].join('|'),'g'),'').replace(/[\d\.kjt]+/g,'').trim()||'-';

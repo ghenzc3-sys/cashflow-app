@@ -25,6 +25,7 @@ thead{background:#2563eb;color:#fff;font-weight:600}
 tbody tr{border-bottom:1px solid #f3f4f6}
 tfoot{background:#1e3a8a;color:#fff;font-weight:800}
 tfoot td{padding:12px}
+tfoot td:last-child{text-align:right;padding-right:20px} /* Biar angka Sisa ke kanan */
 </style>
 </head>
 <body>
@@ -61,34 +62,22 @@ function load() {
   const tb = document.querySelector('#tbl tbody'); 
   tb.innerHTML='';
   let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
-  let totMinjemin=0, totHutang=0, totDikembali=0, totPengembalian=0;
 
   data.forEach((d,i)=>{
-    // INI RUMUS BARU YANG BENER
-    // Hutang + = Uang nambah. Minjemin - = Uang berkurang
+    // Rumus bener: Hutang+ Minjemin-
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.hutang||0) - (d.keluar||0) - (d.minjemin||0) - (d.dikembalikan||0);
-    
     totalMasuk += (d.masuk||0) + (d.pengembalian||0);
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
     totalHutang += d.hutang||0; 
     totalPinjam += d.minjemin||0;
-    totMinjemin += d.minjemin||0;
-    totHutang += d.hutang||0;
-    totDikembali += d.dikembalikan||0;
-    totPengembalian += d.pengembalian||0;
 
     tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
   });
 
+  // INI KUNCINYA: colspan="10" biar ngegabung 10 kolom kiri
   document.getElementById('barisTotal').innerHTML = `
     <tr>
-      <td colspan="4">TOTAL</td>
-      <td>${rupiah(totMinjemin)}</td>
-      <td>${rupiah(totHutang)}</td>
-      <td>${rupiah(totDikembali)}</td>
-      <td>${rupiah(totPengembalian)}</td>
-      <td>${rupiah(totalMasuk)}</td>
-      <td>${rupiah(totalKeluar)}</td>
+      <td colspan="10" style="text-align:left;padding-left:20px">TOTAL</td>
       <td>${rupiah(saldo)}</td>
     </tr>`;
 

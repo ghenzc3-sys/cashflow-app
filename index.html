@@ -1,1 +1,164 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cashflow Pribadi</title>
+<style>
+:root{
+  --biru:#0ea5e9;
+  --biru-gelap:#2563eb;
+  --tosca:#2dd4bf;
+  --merah:#ef4444;
+  --hijau:#10b981;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  margin:0;
+  padding:16px;
+  background:linear-gradient(135deg,var(--biru-gelap),var(--biru));
+  min-height:100vh;
+  color:#fff;
+}
+h1{font-size:24px;margin:0 0 16px;text-align:center}
+.box{
+  background:#fff;
+  color:#0f172a;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  margin-bottom:16px;
+}
+label{display:block;font-size:14px;margin:8px 0 6px;font-weight:600}
+input,button{
+  width:100%;
+  padding:12px;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  font-size:16px;
+  background:#fff;
+}
+button{
+  background:var(--biru);
+  color:#fff;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+}
+button:active{transform:scale(.98)}
+button.danger{background:var(--merah)}
+button.ghost{background:#f1f5f9;color:#0f172a;border:1px solid #e5e7eb}
+.row{display:flex;gap:8px}
+.row>button{flex:1}
+.table{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px;border-bottom:1px solid #f1f5f9;text-align:left}
+tr.income td:nth-child(3){color:var(--hijau);font-weight:700}
+tr.expense td:nth-child(3){color:var(--merah);font-weight:700}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.pill.income{background:#ecfdf5;color:#065f46}
+.pill.expense{background:#fef2f2;color:#991b1b}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:10px}
+.kpi.t{font-size:12px;color:#64748b}
+.kpi.v{font-size:16px;font-weight:800}
+.hide{display:none!important}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.toolbar button{width:auto;padding:8px 12px}
+.search{width:100%;margin:8px 0}
+.hint{font-size:12px;color:#64748b}
+.right{text-align:right}
+</style>
+</head>
+<body>
+<h1>Cashflow Pribadi</h1>
+
+<div class="box">
+  <label>Input Cepat</label>
+  <input id="quick" placeholder="Contoh: gaji 2jt, makan 25rb, bensin 50rb">
+  <div class="hint">Format: [nama] [jumlah] [k] [rb] [jt] [m]. + = Pemasukan, - = Pengeluaran</div>
+  <div style="margin-top:8px" class="row">
+    <button id="btnAdd">Tambah</button>
+    <button id="btnReset" class="ghost">Reset Semua</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="kpi">
+    <div class="card"><div class="t">Saldo</div><div id="saldo" class="v">Rp 0</div></div>
+    <div class="card"><div class="t">Masuk</div><div id="masuk" class="v">Rp 0</div></div>
+    <div class="card"><div class="t">Keluar</div><div id="keluar" class="v">Rp 0</div></div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="toolbar">
+    <button id="toggleEye">Sembunyikan Saldo</button>
+    <button id="exportCSV" class="ghost">Export CSV</button>
+    <button id="clearFilter" class="ghost">Reset Filter</button>
+  </div>
+  <input id="search" class="search" placeholder="Cari: gaji, makan, 2025-09...">
+  <div class="table">
+    <table>
+      <thead><tr><th>Tanggal</th><th>Nama</th><th>Jumlah</th><th>Tipe</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const LS="cfx_v13";
+const $=s=>document.querySelector(s);
+const fmt=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n||0);
+const today=()=>new Date().toISOString().slice(0,10);
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS)||"[]")}catch{return[]}};
+const save=d=>localStorage.setItem(LS,JSON.stringify(d));
+let hide=false;
+
+function parseQuick(t){
+  t=(t||"").toLowerCase().trim(); if(!t)return null;
+  let sign=/^\+/.test(t)?1:/^-/.test(t)?-1:1; t=t.replace(/^[\+\-]\s*/,"");
+  const m=t.match(/(-?\d+(?:[.,]\d+)?)\s*(jt|m|k|rb)?/);
+  if(!m)return null;
+  let n=parseFloat(m[1].replace(",","."));
+  const u=m[2];
+  if(u==="jt"||u==="m")n*=1e6;
+  else if(u==="k"||u==="rb")n*=1e3;
+  n=Math.round(n*sign); if(!isFinite(n)||n===0)return null;
+  const name=t.replace(/(-?\d+(?:[.,]\d+)?)\s*(jt|m|k|rb)?/,"").trim()||"Tanpa nama";
+  return{name,amount:Math.abs(n),type:n>=0?"income":"expense"};
+}
+
+function render(){
+  const data=load().sort((a,b)=>b.date.localeCompare(a.date));
+  const q=($("#search").value||"").toLowerCase();
+  const rows=data.filter(r=>(r.name+" "+r.date).toLowerCase().includes(q));
+  const tb=$("#tbody"); tb.innerHTML="";
+  let inc=0,exp=0;
+  rows.forEach((r,i)=>{
+    inc+=r.type==="income"?r.amount:0;
+    exp+=r.type==="expense"?r.amount:0;
+    const tr=document.createElement("tr");
+    tr.className=r.type;
+    tr.innerHTML=`<td>${r.date}</td><td>${r.name}</td><td class="right">${fmt(r.amount)}</td><td><span class="pill ${r.type}">${r.type==="income"?"Masuk":"Keluar"}</span></td><td class="right"><button data-i="${i}" class="danger" style="padding:6px 8px">Hapus</button></td>`;
+    tb.appendChild(tr);
+  });
+  $("#masuk").textContent=fmt(inc);
+  $("#keluar").textContent=fmt(exp);
+  $("#saldo").textContent=hide?"••••••":fmt(inc-exp);
+  tb.querySelectorAll("button.danger").forEach(b=>b.onclick=()=>{const i=+b.dataset.i; const all=load().sort((a,b)=>b.date.localeCompare(a.date)); all.splice(i,1); save(all); render()});
+}
+
+$("#btnAdd").onclick=()=>{const p=parseQuick($("#quick").value); if(!p){alert("Format salah. Contoh: gaji 2jt / makan 25rb");return} const d=load(); d.push({date:today(),...p}); save(d); $("#quick").value=""; render()};
+$("#btnReset").onclick=()=>{if(confirm("Hapus semua data?")){localStorage.removeItem(LS); render()}};
+$("#toggleEye").onclick=()=>{hide=!hide; $("#toggleEye").textContent=hide?"Tampilkan Saldo":"Sembunyikan Saldo"; render()};
+$("#exportCSV").onclick=()=>{const d=load(); if(!d.length){alert("Data kosong");return} let csv="date,name,amount,type\n"; d.forEach(r=>{csv+=`${r.date},"${r.name.replace(/"/g,'""')}",${r.amount},${r.type}\n`}); const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="cashflow.csv"; a.click()};
+$("#clearFilter").onclick=()=>{$("#search").value=""; render()};
+$("#search").oninput=render;
+
+render();
+</script>
+</body>
+</html>

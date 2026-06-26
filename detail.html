@@ -50,7 +50,7 @@ tfoot td:last-child{text-align:right;padding-right:20px}
     </table>
   </div>
   <div style="margin-top:12px">
-    <button class="btn btn-kembali" onclick="window.location.href='/index.html'">← Kembali</button> <!-- KUNCI: PAKAI / -->
+    <button class="btn btn-kembali" onclick="window.location.href='/index.html'">← Kembali</button>
   </div>
 </div>
 <script>
@@ -61,7 +61,7 @@ function load() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
   const tb = document.querySelector('#tbl tbody');
   tb.innerHTML='';
-  let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
+  let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0, totalDikembalikan=0; // TAMBAH TOTAL DIKEMBALIKAN
 
   data.forEach((d,i)=>{
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.hutang||0) - (d.keluar||0) - (d.minjemin||0) - (d.dikembalikan||0);
@@ -69,6 +69,7 @@ function load() {
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
     totalHutang += d.hutang||0;
     totalPinjam += d.minjemin||0;
+    totalDikembalikan += d.dikembalikan||0; // HITUNG TOTAL DIKEMBALIKAN
 
     tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
   });
@@ -84,10 +85,10 @@ function load() {
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
   document.getElementById('tHutang').innerText = rupiah(totalHutang);
   document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
-  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam); // RUMUS LAMA: Total Hutang - Minjemin
+  document.getElementById('sHutang').innerText = rupiah(totalHutang - totalDikembalikan); // RUMUS BARU: HUTANG - DIKEMBALIKAN
 }
 
-function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }
+function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); }
 load();
 </script>
 </body>

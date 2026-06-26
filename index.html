@@ -1,220 +1,177 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashflow</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-      .container {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            text-align: center;
-            width: 500px;
-        }
-        h1 {
-            color: #004080;
-            margin-bottom: 15px;
-            font-size: 42px;
-        }
-      .emoji {
-            font-size: 60px;
-            margin: 15px 0;
-        }
-      .label {
-            color: #004080;
-            font-size: 24px;
-            margin: 25px 0 10px;
-            font-weight: bold;
-        }
-      .saldo-box {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-      .saldo {
-            border: 3px solid #004080;
-            border-radius: 12px;
-            padding: 18px 20px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #004080;
-            width: 280px;
-            text-align: center;
-        }
-      .eye-btn {
-            background: #004080;
-            border: none;
-            border-radius: 12px;
-            width: 65px;
-            cursor: pointer;
-            font-size: 28px;
-        }
-      .input-box {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-        input {
-            flex: 1;
-            padding: 18px;
-            border: 3px solid #004080;
-            border-radius: 12px;
-            font-size: 20px;
-        }
-        input::placeholder {
-            font-size: 18px;
-        }
-      .simpan {
-            background: #004080;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 18px 30px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 20px;
-        }
-      .keyword {
-            font-size: 15px;
-            color: #888;
-            margin: 12px 0 25px;
-        }
-      .detail {
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 18px 40px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 20px;
-        }
-      .simpan:hover { background: #002a50; }
-      .detail:hover { background: #218838; }
-      .eye-btn:hover { background: #002a50; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Cashflow</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f4f6f8; 
+      padding: 20px; 
+      margin: 0; 
+    }
+    h1 { 
+      text-align: center; 
+      color: #2563eb; 
+      font-size: 32px; 
+      font-weight: 900; 
+      margin: 0 0 20px 0; 
+      padding: 16px 0; 
+      background: white; 
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    }
+    .form-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 0 auto 20px auto;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      grid-column: span 2;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-simpan { background: #2563eb; color: white; }
+    .btn-detail { background: #059669; color: white; }
+    .btn-reset { background: #6b7280; color: white; }
+    
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .btn-group { grid-column: span 1; flex-direction: column; }
+      h1 { font-size: 24px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cashflow</h1>
-        <div class="emoji">🐱</div>
+  <h1>Input Cashflow</h1>
 
-        <div class="label">Saldo</div>
-        <div class="saldo-box">
-            <div class="saldo" id="saldo">Rp 0</div>
-            <button class="eye-btn" id="toggleBtn">👁️</button>
-        </div>
-
-        <div class="input-box">
-            <input type="text" id="inputData" placeholder="isi disini">
-            <button class="simpan" id="simpanBtn">Simpan</button>
-        </div>
-        <div class="keyword">Keyword: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
-
-        <button class="detail" id="detailBtn">Detail</button>
+  <div class="form-box">
+    <div class="form-grid">
+      <div>
+        <label>Tanggal</label>
+        <input type="date" id="tanggal">
+      </div>
+      <div>
+        <label>Item</label>
+        <input type="text" id="item" placeholder="Contoh: Gaji, Makan">
+      </div>
+      <div>
+        <label>Nama</label>
+        <input type="text" id="nama" placeholder="Contoh: Budi">
+      </div>
+      <div>
+        <label>Jenis Transaksi</label>
+        <select id="jenis">
+          <option value="masuk">Masuk</option>
+          <option value="keluar">Keluar</option>
+          <option value="hutang">Hutang</option>
+          <option value="minjemin">Minjemin</option>
+          <option value="dikembalikan">Dikembalikan</option>
+          <option value="pengembalian">Pengembalian</option>
+        </select>
+      </div>
+      <div style="grid-column: span 2;">
+        <label>Nominal</label>
+        <input type="number" id="nominal" placeholder="0" min="0">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-simpan" onclick="simpanData()">Simpan</button>
+        <button class="btn btn-reset" onclick="resetForm()">Reset</button>
+        <button class="btn btn-detail" onclick="window.location.href='detail.html'">Lihat Detail →</button>
+      </div>
     </div>
+  </div>
 
-<script>
-let saldoTersembunyi = false;
+  <script>
+    // Auto isi tanggal hari ini
+    document.getElementById('tanggal').valueAsDate = new Date();
 
-function formatRupiah(angka) {
-    return 'Rp ' + angka.toLocaleString('id-ID');
-}
-
-function updateSaldo() {
-    let saldo = parseInt(localStorage.getItem('saldoCashflow')) || 0;
-    document.getElementById('saldo').textContent = saldoTersembunyi? 'Rp *******' : formatRupiah(saldo);
-}
-
-document.getElementById('toggleBtn').addEventListener('click', function() {
-    saldoTersembunyi =!saldoTersembunyi;
-    updateSaldo();
-});
-
-document.getElementById('simpanBtn').addEventListener('click', function() {
-    let input = document.getElementById('inputData').value.trim().toLowerCase();
-    if(!input) return alert('Isi dulu bang!');
-
-    let data = JSON.parse(localStorage.getItem('dataDetailCashflow')) || [];
-    let no = data.length + 1;
-    let tanggal = new Date().toLocaleDateString('id-ID');
-
-    let row = {
-        no: no,
-        tanggal: tanggal,
-        item: '',
-        nama: '',
-        minjemin: '',
-        hutang: 0,
-        kembali: 0,
-        pengembalian: 0,
-        masuk: 0,
-        keluar: 0,
-        sisa: 0
-    };
-
-    let parts = input.split(' ');
-    let nominal = parseInt(parts[parts.length-1]);
-    if(isNaN(nominal)) return alert('Nominal harus angka bang!');
-
-    let item = parts[0];
-
-    if(item === 'gaji' || item === 'upah' || item === 'masuk') {
-        row.item = 'Masuk';
-        row.masuk = nominal;
-    } else if(item === 'keluar' || item === 'beli' || item === 'bayar') {
-        row.item = 'Keluar';
-        row.keluar = nominal;
-    } else if(item === 'hutang') {
-        row.item = 'Hutang';
-        row.nama = parts.slice(1, -1).join(' ');
-        row.hutang = nominal;
-    } else if(item === 'minjemin') {
-        row.item = 'Minjemin';
-        row.nama = parts.slice(1, -1).join(' ');
-        row.hutang = nominal;
-    } else if(item === 'kembali') {
-        row.item = 'Kembali';
-        row.nama = parts.slice(1, -1).join(' ');
-        row.pengembalian = nominal;
-    } else {
-        return alert('Format salah bang!');
+    function formatRupiah(num) {
+      return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
     }
 
-    let saldo = parseInt(localStorage.getItem('saldoCashflow')) || 0;
-    saldo = saldo + row.masuk - row.keluar;
-    row.sisa = saldo;
-    localStorage.setItem('saldoCashflow', saldo);
+    function simpanData() {
+      const tanggal = document.getElementById('tanggal').value;
+      const item = document.getElementById('item').value.trim();
+      const nama = document.getElementById('nama').value.trim();
+      const jenis = document.getElementById('jenis').value;
+      const nominal = Number(document.getElementById('nominal').value) || 0;
 
-    data.push(row);
-    localStorage.setItem('dataDetailCashflow', JSON.stringify(data));
+      if (!tanggal || !item || nominal <= 0) {
+        alert('Tanggal, Item, dan Nominal wajib diisi & > 0');
+        return;
+      }
 
-    document.getElementById('inputData').value = '';
-    updateSaldo();
-    alert('Data tersimpan!');
-});
+      // Ambil data lama dari localStorage dengan key 'cashflowData'
+      const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
 
-document.getElementById('detailBtn').addEventListener('click', function() {
-    window.location.href = 'detail.html';
-});
+      // Bikin object baru sesuai key yang dibaca detail.html
+      const newData = {
+        tanggal: tanggal,
+        item: item,
+        nama: nama,
+        masuk: jenis === 'masuk' || jenis === 'pengembalian' ? nominal : 0,
+        keluar: jenis === 'keluar' || jenis === 'dikembalikan' ? nominal : 0,
+        hutang: jenis === 'hutang' ? nominal : 0,
+        minjemin: jenis === 'minjemin' ? nominal : 0,
+        dikembalikan: jenis === 'dikembalikan' ? nominal : 0,
+        pengembalian: jenis === 'pengembalian' ? nominal : 0
+      };
 
-document.getElementById('inputData').addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') document.getElementById('simpanBtn').click();
-});
+      data.push(newData);
+      
+      // Simpan lagi dengan key 'cashflowData' PENTING!
+      localStorage.setItem('cashflowData', JSON.stringify(data));
+      
+      alert('Data berhasil disimpan!');
+      resetForm();
+    }
 
-window.onload = updateSaldo;
-</script>
+    function resetForm() {
+      document.getElementById('item').value = '';
+      document.getElementById('nama').value = '';
+      document.getElementById('nominal').value = '';
+      document.getElementById('jenis').value = 'masuk';
+      document.getElementById('tanggal').valueAsDate = new Date();
+    }
+  </script>
 </body>
 </html>

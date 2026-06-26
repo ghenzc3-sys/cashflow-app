@@ -7,24 +7,25 @@
 <style>
 *{box-sizing:border-box}
 body{font-family:Segoe UI,Arial;background:#eef2ff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:16px}
-.box{background:#fff;padding:32px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;max-width:420px;text-align:center}
-h1{color:#1d4ed8;font-size:28px;margin:0 0 8px}
-.emoji{font-size:48px;margin-bottom:8px}
-.saldo-wrap{display:flex;gap:8px;margin:12px 0}
-.saldo-box{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:18px;font-weight:700;color:#2563eb}
-.btn-icon{width:46px;border:none;border-radius:12px;background:#2563eb;color:#fff;font-size:20px;cursor:pointer}
-.input-wrap{display:flex;gap:8px;margin-bottom:8px}
-#inputData{flex:1;border:2px solid #2563eb;border-radius:12px;padding:12px;font-size:15px}
-.btn{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
-.btn-hijau{background:#10b981;width:100%;margin-top:12px;font-size:16px}
-.keyword{font-size:12px;color:#6b7280;margin-bottom:10px;font-weight:600}
+.box{background:#fff;padding:40px 36px;border-radius:24px;box-shadow:0 12px 32px rgba(0,0,0,.12);width:100%;max-width:480px;text-align:center}
+h1{color:#1d4ed8;font-size:32px;margin:0 0 12px;font-weight:800}
+.emoji{font-size:60px;margin-bottom:10px}
+.label-saldo{font-weight:800;font-size:18px;color:#1d4ed8;margin-bottom:8px;display:block}
+.saldo-wrap{display:flex;gap:10px;margin:12px 0 20px}
+.saldo-box{flex:1;border:2px solid #2563eb;border-radius:14px;padding:16px;font-size:22px;font-weight:800;color:#2563eb;text-align:center}
+.btn-icon{width:52px;border:none;border-radius:14px;background:#2563eb;color:#fff;font-size:24px;cursor:pointer}
+.input-wrap{display:flex;gap:10px;margin-bottom:10px}
+#inputData{flex:1;border:2px solid #2563eb;border-radius:14px;padding:14px;font-size:16px}
+.btn{background:#2563eb;color:#fff;border:none;border-radius:14px;padding:14px 20px;font-weight:700;cursor:pointer;font-size:15px}
+.btn-hijau{background:#10b981;width:100%;margin-top:16px;font-size:17px;padding:16px}
+.keyword{font-size:12px;color:#6b7280;margin-top:8px;font-weight:600}
 </style>
 </head>
 <body>
   <div class="box">
     <h1>Cashflow</h1>
     <div class="emoji">😺</div>
-    <label style="font-weight:700">Saldo</label>
+    <label class="label-saldo">Saldo</label>
     <div class="saldo-wrap">
       <div class="saldo-box" id="saldoText">Rp *******</div>
       <button class="btn-icon" id="btnMata">👁️</button>
@@ -34,23 +35,28 @@ h1{color:#1d4ed8;font-size:28px;margin:0 0 8px}
       <button class="btn" id="btnSimpan">Simpan</button>
     </div>
     <div class="keyword">Keyword WAJIB: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
-    <button class="btn btn-hijau" id="btnDetail">Detail</button>
+    <button class="btn btn-hijau" id="btnKeDetail">Detail</button> <!-- ID UDAH DIGANTI -->
   </div>
+
 <script>
 const KEY = 'cashflow_data_v1';
 let buka = false;
 const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
 const KEYWORDS = ['gaji', 'upah', 'beli', 'bayar', 'hutang', 'minjemin', 'pinjemin', 'kembali'];
+
 function getSaldo() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
   return data.reduce((s,d) => s + (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0), 0);
 }
+
 function refreshSaldo() {
   const s = getSaldo();
   document.getElementById('saldoText').innerText = buka? rupiah(s) : 'Rp *******';
   document.getElementById('btnMata').innerText = buka? '🙈' : '👁️';
 }
+
 document.getElementById('btnMata').onclick = () => { buka =!buka; refreshSaldo(); };
+
 document.getElementById('btnSimpan').onclick = () => {
   const txt = document.getElementById('inputData').value.toLowerCase().trim();
   if(!txt) return alert('Isi dulu bang');
@@ -71,7 +77,10 @@ document.getElementById('btnSimpan').onclick = () => {
   if(buka) refreshSaldo();
   alert('Tersimpan '+item+' '+rupiah(num));
 };
-document.getElementById('btnDetail').onclick = () => location.href='detail.html';
+
+// INI YANG DIBENERIN: ID TOMBOL DETAIL
+document.getElementById('btnKeDetail').onclick = () => location.href='detail.html';
+
 document.getElementById('inputData').onkeypress = e => { if(e.key==='Enter') document.getElementById('btnSimpan').click(); };
 refreshSaldo();
 </script>

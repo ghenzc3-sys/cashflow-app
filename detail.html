@@ -5,6 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detail Cashflow</title>
 <style>
+body{font-family:Segoe UI,Arial;background:#eef2ff;margin:0;padding:20px}
+.wrap{max-width:1200px;margin:0 auto}
+h1{color:#1d4ed8;text-align:center;margin:0 0 20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.card h3{margin:0;font-size:13px;color:#6b7280}
+.card b{display:block;margin-top:6px;font-size:18px;color:#111827}
+.total-card{background:#2563eb;color:#fff}
+.total-card h3,.total-card b{color:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+th,td{padding:10px;border-bottom:1px solid #f3f4f6;font-size:13px;text-align:center;white-space:nowrap}
+th{background:#2563eb;color:#fff;font-weight:600;position:sticky;top:0}
+.tfoot td{font-weight:700;background:#eff6ff}
+.btn{padding:10px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:700;margin-right:8px}
+.btn-biru{background:#2563eb;color:#fff}
+.btn-merah{background:#ef4444;color:#fff}
+.table-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Detail Cashflow</h1>
+  <div class="cards">
+    <div class="card"><h3>Saldo Akhir</h3><b id="sAkhir">Rp 0</b></div>
+    <div class="card"><h3>Total Masuk</h3><b id="tMasuk">Rp 0</b></div>
+    <div class="card"><h3>Total Keluar</h3><b id="tKeluar">Rp 0</b></div>
+    <div class="card"><h3>Total Hutang</h3><b id="tHutang">Rp 0</b></div>
+    <div class="card"><h3>Dipinjamkan</h3><b id="tPinjam">Rp 0</b></div>
+    <div class="card"><h3>Sisa Hutang</h3><b id="sHutang">Rp 0</b></div>
+    <div class="card total-card"><h3>TOTAL</h3><b id="tTotal">Rp 0</b></div>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <button class="btn btn-biru" onclick="location.href='index.html'">Kembali</button>
+    <button class="btn btn-merah" onclick="kosong()">Hapus Semua</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th>
+          <th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th>
+          <th>Masuk</th><th>Keluar</th><th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+      <tfoot class="tfoot"><tr><td colspan="10">TOTAL AKHIR</td><td id="tTotalBawah">Rp 0</td></tr></tfoot>
+    </table>
+  </div>
+</div>
+
+<script>
+const KEY = 'cashflow_data_v1';
+const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
+
+function load() {
+  const data = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
+  let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
+
+  data.forEach((d,i)=>{
+    // HITUNG SALDO BERJALAN PER BARIS
+    saldo += (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0);
+
+    // HITUNG TOTAL BUAT KARTU
+    totalMasuk += (d.masuk||0) + (d.pengembalian||0);
+    totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
+    totalHutang += d.hutang||0;
+    totalPinjam += d.minjemin||0;
+
+    tb.innerHTML += `<tr>
+      <td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td>
+      <td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td>
+      <td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td>
+    </tr>`;
+  });
+
+  // ISI SEMUA KARTU + TOTAL
+  document.getElementById('sAkhir').innerText = rupiah(saldo);
+  document.getElementById('tMasuk').innerText = rupiah(totalMasuk);
+  document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
+  document.getElementById('tHutang').innerText = rupiah(totalHutang);
+  document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
+  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
+  document.getElementById('tTotal').innerText = rupiah(saldo);
+  document.getElementById('tTotalBawah').innerText = rupiah(saldo);
+}
+
+function kosong(){ if(confirm('Hapus semua data?')){ localStorage.removeItem(KEY); load(); } }
+load();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Cashflow</title>
+<style>
 body{font-family:Arial;background:#f4f6f8;padding:20px;margin:0}
 h1{text-align:center;color:#2563eb;font-size:32px;font-weight:900;margin:0 0 20px}
 .btn-kanan{float:right;background:#dc2626;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}

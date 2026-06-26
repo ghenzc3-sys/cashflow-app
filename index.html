@@ -50,7 +50,7 @@ tfoot td:last-child{text-align:right;padding-right:20px}
     </table>
   </div>
   <div style="margin-top:12px">
-    <a href="index.html" class="btn btn-kembali">← Kembali</a>
+    <a href="./index.html" class="btn btn-kembali">← Kembali</a>  <!-- INI YANG DIGANTI -->
   </div>
 </div>
 <script>
@@ -84,11 +84,10 @@ function load() {
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
   document.getElementById('tHutang').innerText = rupiah(totalHutang);
   document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
-  // BALIKIN LAGI KE RUMUS LAMA: Total Hutang - Minjemin
-  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
+  document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam); // UDAH BALIK KE VERSI LAMA
 }
 
-function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }
+function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); }
 load();
 </script>
 </body>

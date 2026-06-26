@@ -35,18 +35,19 @@ h1{color:#1d4ed8;font-size:32px;margin:0 0 12px;font-weight:800}
       <button class="btn" id="btnSimpan">Simpan</button>
     </div>
     <div class="keyword">Keyword WAJIB: gaji, upah, beli, bayar, hutang, minjemin, kembali</div>
-    <a href="detail.html" class="btn btn-hijau">Detail</a> <!-- INI KUNCINYA: PAKE <a> -->
+    <a href="detail.html" class="btn btn-hijau">Detail</a>
   </div>
 
 <script>
 const KEY = 'cashflow_data_v1';
 let buka = false;
 const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
-const KEYWORDS = ['gaji', 'upah', 'beli', 'bayar', 'hutang', 'minjemin', 'pinjemin', 'kembali'];
+const KEYWORDS = ['gaji', 'upah', 'beli', 'bayar', 'hutang', 'minjemin', 'pinjemin', 'kembali', 'dikembalikan'];
 
 function getSaldo() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  return data.reduce((s,d) => s + (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0), 0);
+  // INI RUMUS YANG BENER: HUTANG +, MINJEMIN -
+  return data.reduce((s,d) => s + (d.masuk||0) + (d.pengembalian||0) + (d.hutang||0) - (d.keluar||0) - (d.minjemin||0) - (d.dikembalikan||0), 0);
 }
 
 function refreshSaldo() {
@@ -63,12 +64,15 @@ document.getElementById('btnSimpan').onclick = () => {
   if (!KEYWORDS.some(k => txt.includes(k))) return alert('Gagal Simpan!\n\nWajib pake keyword: gaji, upah, beli, bayar, hutang, minjemin, kembali\nContoh: gaji 50000');
   const num = Number((txt.match(/(\d[\d\.]*)/)||[0,'0'])[1].replace(/\./g,'')) || 0;
   if(num<=0) return alert('Kasih angka. Ex: gaji 50000');
+  
   let j='masuk';
   if(txt.includes('beli')||txt.includes('bayar')) j='keluar';
+  else if(txt.includes('dikembalikan')) j='dikembalikan'; // BAYAR UTANG
+  else if(txt.includes('kembali')) j='pengembalian'; // DIBAYAR UTANG
   else if(txt.includes('hutang')) j='hutang';
   else if(txt.includes('minjemin')||txt.includes('pinjemin')) j='minjemin';
-  else if(txt.includes('kembali')) j=txt.includes('dikembali')?'dikembalikan':'pengembalian';
   else if(txt.includes('gaji')||txt.includes('upah')) j='masuk';
+
   const item = txt.replace(/[\d\.]+/g,'').trim() || j;
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
   data.push({tanggal:new Date().toISOString().split('T')[0], item, nama:'-', masuk:j==='masuk'?num:0, keluar:j==='keluar'?num:0, hutang:j==='hutang'?num:0, minjemin:j==='minjemin'?num:0, dikembalikan:j==='dikembalikan'?num:0, pengembalian:j==='pengembalian'?num:0});

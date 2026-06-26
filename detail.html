@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Cashflow</title>
+<style>
+:root{--biru:#2563eb;--merah:#ef4444;--abu:#f3f4f6}
+*{box-sizing:border-box;font-family:Segoe UI,Arial}
+body{background:var(--abu);margin:0;padding:16px}
+.wrap{max-width:1200px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;background:#fff;padding:14px 18px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+h1{color:var(--biru);font-size:22px;margin:0;font-weight:800}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;font-size:13px}
+.btn-kembali{background:var(--biru);color:#fff}
+.btn-kosong{background:var(--merah);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.card{background:#fff;border-radius:14px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.card h3{font-size:12px;color:#6b7280;margin:0 0 4px}
+.card b{font-size:17px}
+.biru{color:var(--biru)}.merah{color:var(--merah)}
+.table{background:#fff;border-radius:16px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:10px;font-size:13px;text-align:center}
+thead{background:var(--biru);color:#fff}
+tbody tr:nth-child(even){background:#fafafa}
+tfoot{background:#1e40af;color:#fff;font-weight:800}
+.btn-x{background:var(--merah);color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>📊 Detail Transaksi</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-kosong" onclick="kosong()">Kosongkan</button>
+      <button class="btn btn-kembali" onclick="location.href='/index.html'">← Input</button>
+    </div>
+  </div>
 
+  <div class="grid">
+    <div class="card"><h3>Saldo Akhir</h3><b class="biru" id="s1">Rp 0</b></div>
+    <div class="card"><h3>Masuk</h3><b class="biru" id="s2">Rp 0</b></div>
+    <div class="card"><h3>Keluar</h3><b class="merah" id="s3">Rp 0</b></div>
+    <div class="card"><h3>Hutang</h3><b class="merah" id="s4">Rp 0</b></div>
+    <div class="card"><h3>Pinjamkan</h3><b class="biru" id="s5">Rp 0</b></div>
+    <div class="card"><h3>Sisa Hutang</h3><b class="merah" id="s6">Rp 0</b></div>
+  </div>
+
+  <div class="table">
+    <table id="tbl">
+      <thead><tr><th>No</th><th>Tgl</th><th>Item</th><th>Nama</th><th>Masuk</th><th>Keluar</th><th>Hutang</th><th>Pinjam</th><th>Bayar</th><th>Sisa</th><th></th></tr></thead>
+      <tbody></tbody>
+      <tfoot id="tot"></tfoot>
+    </table>
+  </div>
+</div>
+<script>
+const KEY='cashflow_v3';const R=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const D=()=>JSON.parse(localStorage.getItem(KEY)||'[]');const S=d=>localStorage.setItem(KEY,JSON.stringify(d));
+
+function L(){
+  const d=D();const tb=document.querySelector('tbody');tb.innerHTML='';let a=0,m=0,k=0,h=0,p=0,b=0;
+  d.forEach((x,i)=>{a+=x.m+x.b+x.h-x.k-x.p;m+=x.m+x.b;k+=x.k;h+=x.h;p+=x.p;b+=x.b;
+  tb.innerHTML+=`<tr><td>${i+1}</td><td>${x.t}</td><td>${x.it}</td><td>${x.n}</td><td>${R(x.m)}</td><td>${R(x.k)}</td><td>${R(x.h)}</td><td>${R(x.p)}</td><td>${R(x.b)}</td><td>${R(a)}</td><td><button class="btn-x" onclick="H(${i})">X</button></td></tr>`});
+  document.getElementById('tot').innerHTML=`<tr><td colspan="9" style="text-align:left;padding-left:16px">TOTAL</td><td>${R(a)}</td><td></td></tr>`;
+  document.getElementById('s1').innerText=R(a);document.getElementById('s2').innerText=R(m);document.getElementById('s3').innerText=R(k);
+  document.getElementById('s4').innerText=R(h);document.getElementById('s5').innerText=R(p);document.getElementById('s6').innerText=R(h-b);
+}
+function H(i){if(confirm('Hapus?')){const d=D();d.splice(i,1);S(d);L()}}
+function kosong(){if(confirm('Kosongkan semua?')){localStorage.removeItem(KEY);L()}}
+L();
+</script>
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -44,20 +43,20 @@ h1{color:var(--biru);font-size:24px;font-weight:900;margin:0 0 18px}
     <button class="btn-simpan" id="simpan">Simpan</button>
   </div>
   <div class="hint">
-    hutang = +Saldo | bayar = -Saldo<br>
+    hutang = +Saldo | nyaur = -Saldo<br>
     dipinjam = -Saldo | kembali = +Saldo<br>
-    Ex: hutang ali 50k | bayar ali 20k | dipinjam suna 10k
+    Ex: hutang ali 50k | nyaur ali 20k | dipinjam suna 10k
   </div>
 
   <a href="/detail.html" class="btn-detail">Lihat Detail →</a>
 </div>
 
 <script>
-const KEY='cashflow_v6'; 
+const KEY='cashflow_v7';
 let buka=false;
 const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
 
-const K={masuk:['gaji','upah','masuk'],keluar:['beli','bayar','keluar'],hutang:['hutang'],bayar:['bayar','balik'],dipinjam:['dipinjam'],kembali:['kembali']};
+const K={masuk:['gaji','upah','masuk'],keluar:['beli','keluar'],hutang:['hutang'],nyaur:['nyaur'],dipinjam:['dipinjam'],kembali:['kembali']}; // <-- ganti bayar jadi nyaur
 
 const getSaldo=()=>getData().reduce((s,d)=>s+d.m+d.h+d.kmb-d.k-d.b-d.p,0);
 const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
@@ -82,16 +81,15 @@ document.getElementById('mata').onclick=()=>{buka=!buka;refresh()};
 
 document.getElementById('simpan').onclick=()=>{
   const r=parse(document.getElementById('inp').value);
-  if(!r)return alert('Format: keyword nama angka\nEx: dipinjam suna 10k');
+  if(!r)return alert('Format: keyword nama angka\nEx: nyaur ali 20k');
   const d=getData();
-  
-  // 1. Mapping Item Baru Sesuai Permintaan Kamu
+
   const label = {
     masuk: /gaji|upah/.test(r.inp.toLowerCase())? 'gaji' : 'masuk',
     keluar: 'keluar',
     hutang: 'hutang',
-    bayar: 'bayar hutang', // <-- Jadi 'bayar hutang'
-    dipinjam: 'dipinjam', 
+    nyaur: 'bayar hutang', // <-- Keyword nyaur, Item jadi bayar hutang
+    dipinjam: 'dipinjam',
     kembali: 'kembali'
   };
 
@@ -99,7 +97,7 @@ document.getElementById('simpan').onclick=()=>{
   if(r.type==='masuk')i.m=r.num;
   if(r.type==='keluar')i.k=r.num;
   if(r.type==='hutang')i.h=r.num;
-  if(r.type==='bayar')i.b=r.num;
+  if(r.type==='nyaur')i.b=r.num; // <-- simpan ke b
   if(r.type==='dipinjam')i.p=r.num;
   if(r.type==='kembali')i.kmb=r.num;
   d.push(i);save(d);document.getElementById('inp').value='';if(buka)refresh();

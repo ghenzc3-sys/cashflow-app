@@ -23,6 +23,8 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;ove
 th,td{padding:10px;font-size:13px;text-align:center;white-space:nowrap}
 thead{background:#2563eb;color:#fff;font-weight:600}
 tbody tr{border-bottom:1px solid #f3f4f6}
+tfoot{background:#1e3a8a;color:#fff;font-weight:800} /* INI BUAT BARIS TOTAL */
+tfoot td{padding:12px}
 </style>
 </head>
 <body>
@@ -40,26 +42,54 @@ tbody tr{border-bottom:1px solid #f3f4f6}
     <div class="card merah"><h3>Sisa Hutang</h3><b id="sHutang">Rp 0</b></div>
   </div>
   <div class="table-wrap">
-    <table id="tbl"><thead><tr><th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th><th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th></tr></thead><tbody></tbody></table>
+    <table id="tbl">
+      <thead><tr><th>No</th><th>Tanggal</th><th>Item</th><th>Nama</th><th>Minjemin</th><th>Hutang</th><th>Dikembalikan</th><th>Pengembalian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th></tr></thead>
+      <tbody></tbody>
+      <tfoot id="barisTotal"></tfoot> <!-- INI TEMPAT BARIS TOTAL -->
+    </table>
   </div>
   <div style="margin-top:12px">
-    <a href="index.html" class="btn btn-kembali">← Kembali</a> <!-- INI JUGA PAKE <a> -->
+    <a href="index.html" class="btn btn-kembali">← Kembali</a>
   </div>
 </div>
 <script>
 const KEY = 'cashflow_data_v1';
 const rupiah = n => 'Rp ' + Number(n||0).toLocaleString('id-ID');
+
 function load() {
   const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-  const tb = document.querySelector('#tbl tbody'); tb.innerHTML='';
+  const tb = document.querySelector('#tbl tbody'); 
+  tb.innerHTML='';
   let saldo=0, totalMasuk=0, totalKeluar=0, totalHutang=0, totalPinjam=0;
+  let totMinjemin=0, totHutang=0, totDikembali=0, totPengembalian=0;
+
   data.forEach((d,i)=>{
     saldo += (d.masuk||0) + (d.pengembalian||0) + (d.minjemin||0) - (d.keluar||0) - (d.hutang||0) - (d.dikembalikan||0);
     totalMasuk += (d.masuk||0) + (d.pengembalian||0);
     totalKeluar += (d.keluar||0) + (d.dikembalikan||0);
-    totalHutang += d.hutang||0; totalPinjam += d.minjemin||0;
+    totalHutang += d.hutang||0; 
+    totalPinjam += d.minjemin||0;
+    totMinjemin += d.minjemin||0;
+    totHutang += d.hutang||0;
+    totDikembali += d.dikembalikan||0;
+    totPengembalian += d.pengembalian||0;
+
     tb.innerHTML += `<tr><td>${i+1}</td><td>${d.tanggal}</td><td>${d.item}</td><td>${d.nama}</td><td>${rupiah(d.minjemin)}</td><td>${rupiah(d.hutang)}</td><td>${rupiah(d.dikembalikan)}</td><td>${rupiah(d.pengembalian)}</td><td>${rupiah(d.masuk)}</td><td>${rupiah(d.keluar)}</td><td>${rupiah(saldo)}</td></tr>`;
   });
+
+  // INI BARIS TOTAL NYA BANG
+  document.getElementById('barisTotal').innerHTML = `
+    <tr>
+      <td colspan="4">TOTAL</td>
+      <td>${rupiah(totMinjemin)}</td>
+      <td>${rupiah(totHutang)}</td>
+      <td>${rupiah(totDikembali)}</td>
+      <td>${rupiah(totPengembalian)}</td>
+      <td>${rupiah(totalMasuk)}</td>
+      <td>${rupiah(totalKeluar)}</td>
+      <td>${rupiah(saldo)}</td>
+    </tr>`;
+
   document.getElementById('sAkhir').innerText = rupiah(saldo);
   document.getElementById('tMasuk').innerText = rupiah(totalMasuk);
   document.getElementById('tKeluar').innerText = rupiah(totalKeluar);
@@ -67,6 +97,7 @@ function load() {
   document.getElementById('tPinjam').innerText = rupiah(totalPinjam);
   document.getElementById('sHutang').innerText = rupiah(totalHutang-totalPinjam);
 }
+
 function kosong(){ if(confirm('Kosongkan semua data?')){ localStorage.removeItem(KEY); load(); } }
 load();
 </script>

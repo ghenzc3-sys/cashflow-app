@@ -6,97 +6,113 @@
   <title>Cashflow</title>
   <style>
     body { 
-      font-family: Arial, sans-serif; 
-      background: #f4f6f8; 
+      font-family: 'Segoe UI', Arial, sans-serif; 
+      background: linear-gradient(135deg, #e0f2fe, #f4f6f8); 
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
-   .box {
+  .box {
       background: white;
-      padding: 30px 25px;
-      border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      width: 320px;
+      padding: 40px 35px; /* DIGEDEIN */
+      border-radius: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      width: 420px; /* LEBIH LEBAR */
+      max-width: 95%;
       text-align: center;
     }
     h1 { 
       color: #1e40af; 
-      font-size: 28px; 
+      font-size: 36px; /* DIGEDEIN */
       font-weight: 900; 
-      margin: 0 0 10px 0; 
+      margin: 0 0 12px 0; 
+      letter-spacing: 0.5px;
     }
-   .emoji { font-size: 48px; margin-bottom: 10px; }
+  .emoji { font-size: 64px; margin-bottom: 15px; } /* DIGEDEIN */
     label { 
       font-weight: bold; 
-      color: #333; 
+      color: #374151; 
       display: block; 
-      margin: 15px 0 8px 0; 
+      margin: 20px 0 10px 0; 
+      font-size: 16px;
     }
-   .saldo-wrap {
+  .saldo-wrap {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
-   .saldo-box {
+  .saldo-box {
       flex: 1;
       border: 2px solid #2563eb;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 20px; /* DIGEDEIN */
+      font-weight: 800;
       color: #2563eb;
+      text-align: center;
+      min-height: 28px;
     }
-   .btn-icon {
+  .btn-icon {
       background: #2563eb;
       border: none;
-      border-radius: 12px;
-      width: 48px;
-      height: 48px;
+      border-radius: 14px;
+      width: 52px; /* DIGEDEIN */
+      height: 52px;
       cursor: pointer;
-      font-size: 22px;
-    }
-   .input-wrap {
+      font-size: 24px;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+  .btn-icon:hover { background: #1e40af; }
+  .input-wrap {
+      display: flex;
+      gap: 10px;
       align-items: center;
     }
     #inputData {
       flex: 1;
       border: 2px solid #2563eb;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 14px;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px; /* DIGEDEIN */
     }
-   .btn-simpan {
+  .btn-simpan {
       background: #2563eb;
       color: white;
       border: none;
-      border-radius: 12px;
-      padding: 12px 20px;
+      border-radius: 14px;
+      padding: 14px 24px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
     }
-   .keyword {
-      font-size: 12px;
+  .btn-simpan:hover { background: #1e40af; }
+  .keyword {
+      font-size: 13px;
       color: #6b7280;
-      margin-top: 6px;
-      margin-bottom: 15px;
+      margin-top: 8px;
+      margin-bottom: 20px;
     }
-   .btn-detail {
+  .btn-detail {
       background: #10b981;
       color: white;
       border: none;
-      border-radius: 12px;
-      padding: 12px 30px;
+      border-radius: 14px;
+      padding: 14px 30px;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 18px; /* DIGEDEIN */
       cursor: pointer;
       width: 100%;
+      transition: 0.2s;
     }
+  .btn-detail:hover { background: #059669; }
   </style>
 </head>
 <body>
@@ -107,7 +123,7 @@
     <label>Saldo</label>
     <div class="saldo-wrap">
       <div class="saldo-box" id="saldoText">Rp *******</div>
-      <button class="btn-icon" onclick="toggleSaldo()">👁️</button>
+      <button class="btn-icon" id="btnMata" onclick="toggleSaldo()">👁️</button>
     </div>
 
     <div class="input-wrap">
@@ -130,18 +146,27 @@
       const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
       let saldo = 0;
       data.forEach(d => {
-        saldo += (d.masuk || 0) - (d.keluar || 0) - (d.hutang || 0) + (d.minjemin || 0) - (d.dikembalikan || 0) + (d.pengembalian || 0);
+        saldo += (Number(d.masuk) || 0) - (Number(d.keluar) || 0) - (Number(d.hutang) || 0) + (Number(d.minjemin) || 0) - (Number(d.dikembalikan) || 0) + (Number(d.pengembalian) || 0);
       });
       return saldo;
     }
 
     function updateSaldo() {
       const saldo = hitungSaldo();
-      document.getElementById('saldoText').textContent = showSaldo? formatRupiah(saldo) : 'Rp *******';
+      const saldoText = document.getElementById('saldoText');
+      const btnMata = document.getElementById('btnMata');
+      
+      if (showSaldo) {
+        saldoText.textContent = formatRupiah(saldo);
+        btnMata.textContent = '🙈'; // Mata ketutup
+      } else {
+        saldoText.textContent = 'Rp *******';
+        btnMata.textContent = '👁️'; // Mata buka
+      }
     }
 
     function toggleSaldo() {
-      showSaldo =!showSaldo;
+      showSaldo =!showSaldo; // INI KUNCINYA: tombol mata fungsi
       updateSaldo();
     }
 
@@ -152,7 +177,6 @@
         return;
       }
 
-      // Ambil angka dari teks
       const angkaMatch = text.match(/(\d[\d\.]*)/);
       const nominal = angkaMatch? Number(angkaMatch[1].replace(/\./g, '')) : 0;
 
@@ -161,7 +185,6 @@
         return;
       }
 
-      // Deteksi keyword
       let jenis = 'masuk';
       if (text.includes('beli') || text.includes('bayar') || text.includes('keluar')) jenis = 'keluar';
       else if (text.includes('hutang')) jenis = 'hutang';
@@ -172,13 +195,10 @@
       }
       else if (text.includes('gaji') || text.includes('upah')) jenis = 'masuk';
 
-      // Ambil item = teks tanpa angka
       const item = text.replace(/[\d\.]+/g, '').trim();
 
-      // Ambil data lama
       const data = JSON.parse(localStorage.getItem('cashflowData') || '[]');
 
-      // Tambah data baru format sama kayak detail.html
       data.push({
         tanggal: new Date().toISOString().split('T')[0],
         item: item || jenis,
@@ -191,13 +211,17 @@
         pengembalian: jenis === 'pengembalian'? nominal : 0
       });
 
-      // Simpan dengan key 'cashflowData' Biar nyambung ke detail.html
-      localStorage.setItem('cashflowData', JSON.stringify(data));
+      localStorage.setItem('cashflowData', JSON.stringify(data)); // KEY SAMA DENGAN DETAIL
       
       document.getElementById('inputData').value = '';
-      updateSaldo();
+      updateSaldo(); // Update saldo langsung
       alert('Tersimpan: ' + item + ' + formatRupiah(nominal));
     }
+
+    // Enter untuk simpan
+    document.getElementById('inputData').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') simpanData();
+    });
 
     // Load pertama kali
     updateSaldo();

@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.5</title>
+<title>Detail Cashflow V13.8.6</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   body{font-family:'Inter',sans-serif;background:#f1f5f9}
   th{background:#2563eb;color:#fff;font-weight:600;font-size:13px}
   td{font-size:13px}
- .btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
- .btn-del:hover{background:#dc2626}
- .btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
- .btn-kembali{background:#3b82f6;color:#fff} /* Biru */
- .btn-kosongkan{background:#ef4444;color:#fff} /* Merah */
+.btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
+.btn-del:hover{background:#dc2626}
+.btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
+.btn-kosongkan{background:#ef4444;color:#fff} /* Merah Kiri */
+.btn-input{background:#10b981;color:#fff} /* Hijau Kanan */
 </style>
 </head>
 <body class="p-3">
@@ -25,7 +25,7 @@
   <div class="flex items-center justify-between mb-3">
     <div class="flex items-center gap-2">
       <span class="text-xl">📊</span>
-      <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8.5</h1>
+      <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8.6</h1>
     </div>
     <div class="flex gap-1">
       <button id="btnUndo" class="btn-top bg-slate-500 text-white">↶</button>
@@ -43,16 +43,16 @@
     <div class="bg-orange-100 rounded-lg p-2"><p class="text-xs text-slate-600">Utang</p><p id="utang" class="text-sm font-bold text-orange-600">Rp 0</p></div>
   </div>
 
-  <!-- UANG HARIAN + TOMBOL KEMBALI/KOSONGKAN -->
+  <!-- UANG HARIAN + TOMBOL KOSONGKAN KIRI, INPUT KAN -->
   <div class="bg-violet-100 rounded-lg p-2 flex justify-between items-center mb-3">
-    <div class="text-center w-full">
+    <button id="btnKosongkan" class="btn-top btn-kosongkan">🗑</button>
+
+    <div class="text-center">
       <p class="text-xs text-slate-600">Uang Harian</p>
       <p id="harian" class="text-sm font-bold text-violet-700">Rp 0</p>
     </div>
-    <div class="flex gap-1 ml-2">
-      <button id="btnKosongkan" class="btn-top btn-kosongkan">🗑</button>
-      <button id="btnKembali" class="btn-top btn-kembali">←</button>
-    </div>
+
+    <button id="btnInput" class="btn-top btn-input">📝 Input</button>
   </div>
 
   <!-- TABEL BIRU -->
@@ -89,14 +89,13 @@ let isNavigatingHistory = false;
 const btnUndo = document.getElementById('btnUndo');
 const btnRedo = document.getElementById('btnRedo');
 const btnExport = document.getElementById('btnExport');
-const btnKembali = document.getElementById('btnKembali');
 const btnKosongkan = document.getElementById('btnKosongkan');
+const btnInput = document.getElementById('btnInput'); // Tombol baru
 
 function saveState(){
   if(isNavigatingHistory) return;
   history = history.slice(0, historyIndex + 1);
   history.push(JSON.stringify(data));
-  // SIMPEN JUGA KE LOCALSTORAGE BIAR INDEX KEBCAA
   localStorage.setItem('cashflowData', JSON.stringify(data));
   historyIndex++;
   updateBtn();
@@ -112,7 +111,7 @@ btnUndo.onclick = ()=>{
     isNavigatingHistory = true;
     historyIndex--;
     data = JSON.parse(history[historyIndex]);
-    localStorage.setItem('cashflowData', JSON.stringify(data)); // Sync ke kulkas
+    localStorage.setItem('cashflowData', JSON.stringify(data));
     render();
     isNavigatingHistory = false;
     updateBtn();
@@ -124,24 +123,26 @@ btnRedo.onclick = ()=>{
     isNavigatingHistory = true;
     historyIndex++;
     data = JSON.parse(history[historyIndex]);
-    localStorage.setItem('cashflowData', JSON.stringify(data)); // Sync ke kulkas
+    localStorage.setItem('cashflowData', JSON.stringify(data));
     render();
     isNavigatingHistory = false;
     updateBtn();
   }
 }
 
-// TOMBOL KEMBALI = MASIH UNDO DULU, SESUAI V13.8.3
-btnKembali.onclick = ()=>{ btnUndo.click(); }
-
-// TOMBOL KOSONGKAN = HAPUS SEMUA DATA + KULKAS
+// TOMBOL KOSONGKAN KIRI
 btnKosongkan.onclick = ()=>{
   if(confirm('Yakin kosongkan semua data?')){
     data = [];
-    localStorage.setItem('cashflowData', '[]'); // Kosongin kulkas juga
+    localStorage.setItem('cashflowData', '[]');
     saveState();
     render();
   }
+}
+
+// TOMBOL INPUT KAN -> KE INDEX.HTML
+btnInput.onclick = ()=>{
+  window.location.href = 'index.html';
 }
 
 // ====== RENDER TABEL ======
@@ -210,7 +211,7 @@ btnExport.onclick = ()=>{
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
-  XLSX.writeFile(wb, "Cashflow_V13.8.5.xlsx");
+  XLSX.writeFile(wb, "Cashflow_V13.8.6.xlsx");
 }
 
 render();

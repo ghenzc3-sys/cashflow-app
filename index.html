@@ -3,219 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cashflow Pribadi V13.8.6</title>
+<title>Cashflow</title>
 <style>
-  :root{--bg:#0f172a;--card:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8;--ok:#22c55e;--danger:#ef4444;--warn:#f59e0b}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  header{padding:16px 20px;background:var(--card);border-bottom:1px solid #0b1220;position:sticky;top:0;z-index:10}
-  header h1{margin:0;font-size:18px}
-  main{padding:16px;max-width:1100px;margin:0 auto}
- .card{background:var(--card);border:1px solid #0b1220;border-radius:14px;padding:16px;margin-bottom:16px}
-  label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-  input,select,button,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #0b1220;background:#0b1220;color:var(--text);outline:none}
-  textarea{min-height:70px;resize:vertical}
- .grid{display:grid;gap:12px}
- .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
- .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
- .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-  button{cursor:pointer;font-weight:600}
- .btn{background:var(--accent);color:#001018;border:0}
- .btn-danger{background:var(--danger);color:#fff;border:0}
- .btn-warn{background:var(--warn);color:#1f1300;border:0}
- .btn-ghost{background:transparent;border:1px solid #1f2937}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:8px;border-bottom:1px solid #0b1220;vertical-align:top}
-  th{text-align:left;color:var(--muted);font-weight:600}
- .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #1f2937}
- .pill.in{background:#052e16;border-color:#14532d;color:#bbf7d0}
- .pill.out{background:#3f1d1d;border-color:#7f1d1d;color:#fecaca}
- .muted{color:var(--muted)}
- .right{text-align:right}
- .nowrap{white-space:nowrap}
- .flex{display:flex;gap:8px;align-items:center}
- .flex.wrap{flex-wrap:wrap}
- .chip{display:inline-flex;gap:6px;align-items:center;border:1px dashed #1f2937;border-radius:10px;padding:6px 10px}
- .chip button{width:auto;padding:4px 8px}
- .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
- .stat.box{background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:12px}
- .stat.box h3{margin:0 0 6px;font-size:12px;color:var(--muted)}
- .stat.box.v{font-size:18px;font-weight:700}
- .hide{display:none!important}
-  @media (max-width:900px){.grid.cols-4{grid-template-columns:repeat(2,1fr)}.stat{grid-template-columns:1fr}}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px}
+ .card{background:#fff;border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.15);padding:24px;width:100%;max-width:380px;text-align:center}
+  .icon{font-size:40px;margin-bottom:8px}
+  h1{margin:0 0 20px;font-size:28px;color:#2563eb;font-weight:800}
+  label{font-size:12px;color:#6b7280;letter-spacing:1px;font-weight:600}
+ .saldo-box{display:flex;align-items:center;gap:8px;margin:10px 0 16px}
+ .saldo{flex:1;background:#f0f9ff;border:2px solid #38bdf8;border-radius:14px;padding:14px;font-size:20px;font-weight:700;color:#2563eb}
+  .eye{width:48px;height:48px;border-radius:50%;background:#0ea5e9;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px}
+  .input-wrap{display:flex;gap:8px}
+  input{flex:1;padding:14px 16px;border-radius:14px;border:1.5px solid #e5e7eb;font-size:14px;outline:none}
+  input:focus{border-color:#38bdf8}
+  .btn-simpan{padding:14px 20px;border-radius:14px;border:0;background:#0ea5e9;color:#fff;font-weight:700;cursor:pointer}
+  .petunjuk{font-size:12px;color:#6b7280;text-align:left;margin:12px 4px 0;line-height:1.6}
+  .btn-detail{margin-top:14px;width:100%;padding:14px;border-radius:14px;border:0;background:#2dd4bf;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
 </style>
 </head>
 <body>
-<header><h1>Cashflow Pribadi V13.8.6</h1></header>
-<main>
   <div class="card">
-    <div class="grid cols-4">
-      <div><label>Tanggal</label><input type="date" id="tgl"></div>
-      <div><label>Jenis</label>
-        <select id="jenis"><option value="in">Pemasukan</option><option value="out">Pengeluaran</option></select>
-      </div>
-      <div><label>Kategori</label><input id="kategori" list="katlist" placeholder="Makanan / Gaji / dll"><datalist id="katlist"></datalist></div>
-      <div><label>Jumlah Rp</label><input type="number" id="jumlah" min="0" step="1000" placeholder="50000"></div>
-    </div>
-    <div class="grid cols-2" style="margin-top:12px">
-      <div><label>Catatan</label><textarea id="catatan" placeholder="Opsional..."></textarea></div>
-      <div><label>Aksi</label>
-        <div class="flex wrap">
-          <button class="btn" id="btnSimpan">Simpan</button>
-          <button class="btn-ghost" id="btnReset">Reset Form</button>
-          <button class="btn-warn" id="btnExport">Export JSON</button>
-          <button class="btn-ghost" id="btnImport">Import JSON</button>
-          <input type="file" id="fileImport" accept="application/json" class="hide">
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="icon">💵</div>
+    <h1>Cashflow</h1>
 
-  <div class="card">
-    <div class="stat">
-      <div class="box"><h3>Total Pemasukan</h3><div class="v" id="totIn">Rp0</div></div>
-      <div class="box"><h3>Total Pengeluaran</h3><div class="v" id="totOut">Rp0</div></div>
-      <div class="box"><h3>Saldo</h3><div class="v" id="saldo">Rp0</div></div>
+    <label>SALDO SAAT INI</label>
+    <div class="saldo-box">
+      <div class="saldo" id="saldo">Rp *******</div>
+      <div class="eye" id="btnEye">👁️</div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="flex wrap" style="justify-content:space-between">
-      <div class="flex wrap">
-        <div><label>Filter Bulan</label><input type="month" id="filterBulan"></div>
-        <div><label>Filter Jenis</label>
-          <select id="filterJenis"><option value="">Semua</option><option value="in">Pemasukan</option><option value="out">Pengeluaran</option></select>
-        </div>
-        <div><label>Cari</label><input id="cari" placeholder="Kategori / Catatan"></div>
-      </div>
-      <div class="chip"><span class="muted">Data tersimpan di browser kamu</span></div>
+    <div class="input-wrap">
+      <input id="inputTxt" placeholder="isi dengan benar dan teliti">
+      <button class="btn-simpan" id="btnSimpan">Simpan</button>
     </div>
-    <div style="overflow:auto;margin-top:12px">
-      <table id="tbl">
-        <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Catatan</th><th class="right">Jumlah</th><th class="nowrap">Aksi</th></tr></thead>
-        <tbody></tbody>
-      </table>
+
+    <div class="petunjuk">
+      Masuk: gaji, upah, dapat, hutang+nama<br>
+      Keluar: beli, bayar+nama, nyaur+nama, jajan
     </div>
+
+    <button class="btn-detail" onclick="location.href='detail.html'">Lihat Detail →</button>
   </div>
-</main>
 
 <script>
 /* ========= SETTINGS ========= */
-const KEY = 'cashflow_v13'; // <-- INI DOANG YANG DIGANTI BIAR NYAMBUNG KE DETAIL
+const KEY = 'cashflow_app_final'; // <-- INI KUNCINYA, HARUS SAMA DENGAN DETAIL
 const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
 
 /* ========= STATE ========= */
 let data = JSON.parse(localStorage.getItem(KEY)) || [];
-let editId = null;
+let showSaldo = false;
 
-/* ========= UTILS ========= */
 const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
-const todayISO = () => new Date().toISOString().slice(0,10);
-const save = () => localStorage.setItem(KEY, JSON.stringify(data));
-const bulanDariTgl = t => t.slice(0,7);
 
 /* ========= INIT ========= */
-$('#tgl').value = todayISO();
-renderKatList();
-render();
+renderSaldo();
 
 /* ========= EVENTS ========= */
+$('#btnEye').addEventListener('click', ()=>{
+  showSaldo = !showSaldo;
+  renderSaldo();
+});
+
 $('#btnSimpan').addEventListener('click', ()=>{
-  const tgl = $('#tgl').value || todayISO();
-  const jenis = $('#jenis').value;
-  const kategori = $('#kategori').value.trim();
-  const jumlah = Number($('#jumlah').value||0);
-  const catatan = $('#catatan').value.trim();
-  if(!kategori || jumlah<=0){ alert('Kategori & Jumlah wajib diisi > 0'); return; }
+  const txt = $('#inputTxt').value.trim().toLowerCase();
+  if(!txt){ alert('Isi dulu bang'); return; }
 
-  if(editId){
-    const i = data.findIndex(x=>x.id===editId);
-    if(i>-1) data[i] = {...data[i], tgl, jenis, kategori, jumlah, catatan};
-    editId = null;
-  }else{
-    data.push({id:crypto.randomUUID(), tgl, jenis, kategori, jumlah, catatan});
+  // Logika Keyword dari petunjuk kamu
+  let jenis = 'out'; 
+  let nama = txt;
+
+  if(txt.includes('gaji')||txt.includes('upah')||txt.includes('dapat')||txt.includes('hutang')){
+    jenis='in';
   }
-  save(); render(); resetForm();
-});
+  if(txt.includes('beli')||txt.includes('bayar')||txt.includes('nyaur')||txt.includes('jajan')){
+    jenis='out';
+  }
 
-$('#btnReset').addEventListener('click', resetForm);
-$('#filterBulan').addEventListener('input', render);
-$('#filterJenis').addEventListener('change', render);
-$('#cari').addEventListener('input', render);
+  const angka = txt.match(/\d+/g);
+  if(!angka){ alert('Masukkan nominal juga. Contoh: gaji 500000'); return; }
+  const jumlah = Number(angka.join(''));
 
-$('#btnExport').addEventListener('click', ()=>{
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a = Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'cashflow_v13.json'});
-  a.click(); URL.revokeObjectURL(a.href);
-});
-$('#btnImport').addEventListener('click', ()=>$('#fileImport').click());
-$('#fileImport').addEventListener('change', e=>{
-  const f = e.target.files[0]; if(!f) return;
-  const rd = new FileReader();
-  rd.onload = ()=>{ try{ const arr = JSON.parse(rd.result); if(Array.isArray(arr)){ data = arr; save(); render(); alert('Import selesai'); }else alert('Format salah'); }catch{ alert('JSON tidak valid'); } };
-  rd.readAsText(f);
+  const catatan = txt.replace(/\d+/g,'').trim();
+  const tgl = new Date().toISOString().slice(0,10);
+  const kategori = catatan.split(' ')[0] || 'Lainnya';
+
+  data.push({id:crypto.randomUUID(), tgl, jenis, kategori, jumlah, catatan});
+  localStorage.setItem(KEY, JSON.stringify(data)); // <-- SIMPAN PAKE KEY SAMA
+  $('#inputTxt').value='';
+  renderSaldo();
 });
 
 /* ========= RENDER ========= */
-function render(){
-  const fb = $('#filterBulan').value;
-  const fj = $('#filterJenis').value;
-  const q = $('#cari').value.toLowerCase();
-
-  let rows = data.slice().sort((a,b)=>a.tgl.localeCompare(b.tgl));
-  if(fb) rows = rows.filter(r=>bulanDariTgl(r.tgl)===fb);
-  if(fj) rows = rows.filter(r=>r.jenis===fj);
-  if(q) rows = rows.filter(r=> (r.kategori+q+' '+r.catatan).toLowerCase().includes(q));
-
-  const tbody = $('#tbl tbody'); tbody.innerHTML='';
-  let sumIn=0,sumOut=0;
-  rows.forEach(r=>{
-    if(r.jenis==='in') sumIn+=r.jumlah; else sumOut+=r.jumlah;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="nowrap">${r.tgl}</td>
-      <td><span class="pill ${r.jenis==='in'?'in':'out'}">${r.jenis==='in'?'Masuk':'Keluar'}</span></td>
-      <td>${escapeHtml(r.kategori)}</td>
-      <td class="muted">${escapeHtml(r.catatan||'')}</td>
-      <td class="right nowrap">${FMT.format(r.jumlah)}</td>
-      <td class="nowrap">
-        <button class="btn-ghost" onclick='editItem("${r.id}")'>Edit</button>
-        <button class="btn-danger" onclick='delItem("${r.id}")'>Hapus</button>
-      </td>`;
-    tbody.appendChild(tr);
-  });
-
-  $('#totIn').textContent = FMT.format(sumIn);
-  $('#totOut').textContent = FMT.format(sumOut);
-  $('#saldo').textContent = FMT.format(sumIn-sumOut);
+function renderSaldo(){
+  const sumIn = data.filter(d=>d.jenis==='in').reduce((a,b)=>a+b.jumlah,0);
+  const sumOut = data.filter(d=>d.jenis==='out').reduce((a,b)=>a+b.jumlah,0);
+  const saldo = sumIn - sumOut;
+  $('#saldo').textContent = showSaldo ? FMT.format(saldo) : 'Rp *******';
+  $('#btnEye').textContent = showSaldo ? '🙈' : '👁️';
 }
-
-function renderKatList(){
-  const set = new Set(data.map(d=>d.kategori).filter(Boolean));
-  $('#katlist').innerHTML = [...set].map(k=>`<option value="${escapeHtml(k)}"></option>`).join('');
-}
-
-function resetForm(){
-  $('#kategori').value=''; $('#jumlah').value=''; $('#catatan').value='';
-  $('#jenis').value='out'; $('#tgl').value=todayISO(); editId=null;
-  $('#btnSimpan').textContent='Simpan';
-}
-
-function editItem(id){
-  const r = data.find(x=>x.id===id); if(!r) return;
-  editId=id;
-  $('#tgl').value=r.tgl; $('#jenis').value=r.jenis; $('#kategori').value=r.kategori;
-  $('#jumlah').value=r.jumlah; $('#catatan').value=r.catatan||'';
-  $('#btnSimpan').textContent='Update';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function delItem(id){
-  if(!confirm('Hapus data ini?')) return;
-  data = data.filter(x=>x.id!==id); save(); render(); renderKatList();
-}
-
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 </script>
 </body>
 </html>

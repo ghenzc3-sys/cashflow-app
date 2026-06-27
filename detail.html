@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -17,7 +16,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f3f4f6;margin:0;padding:16px}
 .head-left{display:flex;align-items:center;gap:12px}
 .head h1{font-size:20px;font-weight:900;color:var(--biru);margin:0}
 .head span{font-size:24px}
-.btn-head-top{display:flex;gap:6px} /* Tombol atas kanan */
+.btn-head-top{display:flex;gap:6px}
 .btn-head-top button{border:none;background:var(--abu-tua);color:#fff;border-radius:8px;padding:6px 8px;font-size:14px;cursor:pointer;display:flex;align-items:center}
 .btn-head-top button:disabled{background:#d1d5db;cursor:not-allowed;opacity:.6}
 .btn-excel{background:var(--hijau-tua2)!important}
@@ -55,8 +54,8 @@ tfoot td{font-weight:900;background:var(--biru);color:#fff}
   <div class="head">
     <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.0</h1></div>
     <div class="btn-head-top">
-      <button id="undo" title="Undo 5x">↩️</button> <!-- Undo -->
-      <button id="redo" title="Redo 5x">↪️</button> <!-- Redo -->
+      <button id="undo" title="Undo 5x">↩️</button>
+      <button id="redo" title="Redo 5x">↪️</button>
       <button class="btn-excel" id="export" title="Export Excel">📊</button>
     </div>
   </div>
@@ -93,32 +92,43 @@ tfoot td{font-weight:900;background:var(--biru);color:#fff}
 <script>
 const KEY='cashflow_v13';
 const HISTORY_KEY='cashflow_history_v13';
-const HISTORY_LIMIT=5; // Limit 5x
+const HISTORY_LIMIT=5;
 let history=[], historyIndex=-1;
 
 const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
 const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+
+const saveHistoryToStorage=()=>{
+  localStorage.setItem(HISTORY_KEY,JSON.stringify({h:history,i:historyIndex}));
+}
+
+const loadHistoryFromStorage=()=>{
+  const saved=localStorage.getItem(HISTORY_KEY);
+  if(saved){
+    const parsed=JSON.parse(saved);
+    history=parsed.h||[localStorage.getItem(KEY)||'[]'];
+    historyIndex=parsed.i??history.length-1;
+  }else{
+    history=[localStorage.getItem(KEY)||'[]'];
+    historyIndex=0;
+  }
+}
+
 const save=(d, pushHist=true)=>{
   localStorage.setItem(KEY,JSON.stringify(d));
-  if(pushHist) pushHistory(d); // Cuma push kalau aksi baru, bukan pas undo/redo
+  if(pushHist) pushHistory(d); 
   render();
 }
 
 const pushHistory=(state)=>{
-  // Kalau abis undo trus ada aksi baru, history depan dibuang
-  history=history.slice(0,historyIndex+1);
+  history=history.slice(0,historyIndex+1); // Buang redo stack
   history.push(JSON.stringify(state));
   if(history.length>HISTORY_LIMIT){
-    history.shift(); // Buang yg paling lama
+    history.shift(); // Max 5
   }
-  historyIndex=history.length-1; // Selalu di ujung paling baru
+  historyIndex=history.length-1;
+  saveHistoryToStorage(); // <--- INI KUNCINYA BANG
   updateUndoRedoBtn();
-}
-
-const loadHistory=()=>{
-  history=[localStorage.getItem(KEY)||'[]']; // State awal
-  historyIndex=0;
-  localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
 }
 
 const updateUndoRedoBtn=()=>{
@@ -186,22 +196,22 @@ window.hapus=idx=>{
 }
 document.getElementById('kosong').onclick=()=>{
   if(confirm('Yakin kosongkan semua data?')){
-    save([]); // Ini juga ke pushHistory otomatis
+    save([]);
   }
 }
 
 document.getElementById('undo').onclick=()=>{
   if(historyIndex>0){
     historyIndex--;
-    save(JSON.parse(history[historyIndex]), false); // false = jangan push history lagi
-    updateUndoRedoBtn();
+    save(JSON.parse(history[historyIndex]), false); // false = jangan push
+    saveHistoryToStorage(); // Update index
   }
 }
 document.getElementById('redo').onclick=()=>{
   if(historyIndex<history.length-1){
     historyIndex++;
-    save(JSON.parse(history[historyIndex]), false); // false = jangan push history lagi
-    updateUndoRedoBtn();
+    save(JSON.parse(history[historyIndex]), false);
+    saveHistoryToStorage(); // Update index
   }
 }
 
@@ -217,7 +227,7 @@ document.getElementById('export').onclick=()=>{
 }
 
 // Inisialisasi
-if(!localStorage.getItem(HISTORY_KEY)){loadHistory()}else{history=JSON.parse(localStorage.getItem(HISTORY_KEY));historyIndex=history.length-1}
+loadHistoryFromStorage(); // <--- Load history pas buka
 render();
 updateUndoRedoBtn();
 </script>

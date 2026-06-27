@@ -3,199 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.8</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Detail Cashflow V13.8.6</title>
 <style>
-  body{font-family:'Inter',sans-serif;background:#f1f5f9}
-  th{background:#2563eb;color:#fff;font-weight:600;font-size:13px}
-  td{font-size:13px}
-.btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
-.btn-del:hover{background:#dc2626}
-.btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
-.btn-kosongkan{background:#ef4444;color:#fff} /* Merah Kiri */
-.btn-input{background:#10b981;color:#fff} /* Hijau Kanan */
+  :root{--bg:#0f172a;--card:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  header{padding:16px 20px;background:var(--card);border-bottom:1px solid #0b1220;position:sticky;top:0}
+  header h1{margin:0;font-size:18px}
+  main{padding:16px;max-width:1100px;margin:0 auto}
+ .card{background:var(--card);border:1px solid #0b1220;border-radius:14px;padding:16px;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:8px;border-bottom:1px solid #0b1220;vertical-align:top}
+  th{text-align:left;color:var(--muted);font-weight:600}
+ .right{text-align:right}
+ .nowrap{white-space:nowrap}
+ .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #1f2937}
+ .pill.in{background:#052e16;border-color:#14532d;color:#bbf7d0}
+ .pill.out{background:#3f1d1d;border-color:#7f1d1d;color:#fecaca}
+ .muted{color:var(--muted)}
 </style>
 </head>
-<body class="p-3">
-
-<div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-4">
-
-  <!-- HEADER ATAS = UNDO REDO EXPORT -->
-  <div class="flex items-center justify-between mb-3">
-    <div class="flex items-center gap-2">
-      <span class="text-xl">📊</span>
-      <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8.8</h1>
-    </div>
-    <div class="flex gap-1">
-      <button id="btnUndo" class="btn-top bg-slate-500 text-white">↶</button>
-      <button id="btnRedo" class="btn-top bg-slate-500 text-white">↷</button>
-      <button id="btnExport" class="btn-top bg-green-600 text-white">Export</button>
-    </div>
-  </div>
-
-  <!-- CARDS KECIL -->
-  <div class="grid grid-cols-5 gap-2 mb-3 text-center">
-    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Saldo Kas</p><p id="saldo" class="text-sm font-bold text-blue-600">Rp 0</p></div>
-    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Total Masuk</p><p id="masuk" class="text-sm font-bold text-blue-300">Rp 0</p></div>
-    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Total Keluar</p><p id="keluar" class="text-sm font-bold text-red-400">Rp 0</p></div>
-    <div class="bg-green-100 rounded-lg p-2"><p class="text-xs text-slate-600">Piutang</p><p id="piutang" class="text-sm font-bold text-green-600">Rp 0</p></div>
-    <div class="bg-orange-100 rounded-lg p-2"><p class="text-xs text-slate-600">Utang</p><p id="utang" class="text-sm font-bold text-orange-600">Rp 0</p></div>
-  </div>
-
-  <!-- UANG HARIAN + 2 TOMBOL DOANG -->
-  <div class="bg-violet-100 rounded-lg p-2 flex justify-between items-center mb-3">
-    <button id="btnKosongkan" class="btn-top btn-kosongkan">🗑</button>
-    <button id="btnInput" class="btn-top btn-input">📝 Input</button>
-  </div>
-
-  <!-- TABEL BIRU -->
-  <div class="overflow-x-auto rounded-lg border-blue-500">
-    <table class="w-full">
-      <thead>
-        <tr>
-          <th class="p-2">No</th><th class="p-2">Tgl</th><th class="p-2">Ket</th>
-          <th class="p-2">Catatan</th><th class="p-2">Nama</th>
-          <th class="p-2 text-right">Nominal</th><th class="p-2 text-right">Sisa Harian</th>
-          <th class="p-2 text-center">Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tbody" class="bg-white"></tbody>
-      <tfoot>
-        <tr class="bg-blue-600 text-white font-bold">
-          <td colspan="7" class="p-2 text-right">TOTAL SALDO KAS</td>
-          <td id="totalSaldoFoot" class="p-2 text-right">Rp 0</td>
-        </tr>
-      </tfoot>
+<body>
+<header><h1>Detail Transaksi V13.8.6</h1></header>
+<main>
+  <div class="card">
+    <table id="tblDetail">
+      <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Catatan</th><th class="right">Jumlah</th></tr></thead>
+      <tbody></tbody>
     </table>
+    <div id="kosong" class="muted" style="padding:12px;text-align:center">Belum ada data</div>
   </div>
-</div>
-
+</main>
 <script>
-// ====== BACA DARI LOCALSTORAGE ======
-let data = JSON.parse(localStorage.getItem('cashflow_v13')) || [];
+const KEY = 'cashflow_v13'; // <-- INI DOANG YANG DIGANTI, HARUS SAMA KAYAK INDEX
+const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
 
-// ====== HISTORY UNDO/REDO ======
-let history = [JSON.stringify(data)];
-let historyIndex = 0;
-let isNavigatingHistory = false;
+let data = JSON.parse(localStorage.getItem(KEY)) || []; // <-- INI KUNCINYA
 
-const btnUndo = document.getElementById('btnUndo');
-const btnRedo = document.getElementById('btnRedo');
-const btnExport = document.getElementById('btnExport');
-const btnKosongkan = document.getElementById('btnKosongkan');
-const btnInput = document.getElementById('btnInput');
-
-function saveState(){
-  if(isNavigatingHistory) return;
-  history = history.slice(0, historyIndex + 1);
-  history.push(JSON.stringify(data));
-  localStorage.setItem('cashflow_v13', JSON.stringify(data));
-  historyIndex++;
-  updateBtn();
-}
-
-function updateBtn(){
-  btnUndo.disabled = historyIndex <= 0;
-  btnRedo.disabled = historyIndex >= history.length - 1;
-}
-
-btnUndo.onclick = ()=>{
-  if(historyIndex > 0){
-    isNavigatingHistory = true;
-    historyIndex--;
-    data = JSON.parse(history[historyIndex]);
-    localStorage.setItem('cashflowData', JSON.stringify(data));
-    render();
-    isNavigatingHistory = false;
-    updateBtn();
-  }
-}
-
-btnRedo.onclick = ()=>{
-  if(historyIndex < history.length - 1){
-    isNavigatingHistory = true;
-    historyIndex++;
-    data = JSON.parse(history[historyIndex]);
-    localStorage.setItem('cashflowData', JSON.stringify(data));
-    render();
-    isNavigatingHistory = false;
-    updateBtn();
-  }
-}
-
-// KIRI = KOSONGKAN
-btnKosongkan.onclick = ()=>{
-  if(confirm('Yakin kosongkan semua data?')){
-    data = [];
-    localStorage.setItem('cashflowData', '[]');
-    saveState();
-    render();
-  }
-}
-
-// KAN = INPUT KE INDEX.HTML
-btnInput.onclick = ()=>{ window.location.href = 'index.html'; }
-
-// ====== RENDER TABEL ======
 function render(){
-  const tbody = document.getElementById('tbody');
-  if(history.length === 1 &&!isNavigatingHistory) saveState();
-  tbody.innerHTML = '';
-  let sisaHarian = 0;
-  data.forEach((r,i)=>{
-    if(r.ket==='Masuk') sisaHarian += r.nominal;
-    else sisaHarian -= r.nominal;
-    const warnaKet = r.ket==='Masuk'? 'text-blue-600' : 'text-red-600';
-    const warnaNom = r.ket==='Masuk'? 'text-blue-600' : 'text-red-600';
+  const tbody = document.querySelector('#tblDetail tbody');
+  tbody.innerHTML='';
+  if(data.length===0){ document.getElementById('kosong').style.display='block'; return; }
+  document.getElementById('kosong').style.display='none';
+
+  data.sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach(r=>{
     const tr = document.createElement('tr');
-    tr.className = i%2? 'bg-slate-50' : 'bg-white';
     tr.innerHTML = `
-      <td class="p-2 text-center">${i+1}</td>
-      <td class="p-2">${r.tanggal.split('-').reverse().join('/')}</td>
-      <td class="p-2 font-semibold ${warnaKet}">${r.ket}</td>
-      <td class="p-2">${r.catatan}</td>
-      <td class="p-2 text-center">-</td>
-      <td class="p-2 text-right font-semibold ${warnaNom}">Rp ${r.nominal.toLocaleString('id-ID')}</td>
-      <td class="p-2 text-right font-semibold ${i===data.length-1?'bg-green-100':''}">Rp ${sisaHarian.toLocaleString('id-ID')}</td>
-      <td class="p-2 text-center"><button class="btn-del" onclick="hapus(${i})">X</button></td>
-    `;
+      <td class="nowrap">${r.tgl}</td>
+      <td><span class="pill ${r.jenis==='in'?'in':'out'}">${r.jenis==='in'?'Masuk':'Keluar'}</span></td>
+      <td>${escapeHtml(r.kategori)}</td>
+      <td class="muted">${escapeHtml(r.catatan||'')}</td>
+      <td class="right nowrap">${FMT.format(r.jumlah)}</td>`;
     tbody.appendChild(tr);
   });
-  updateCards();
 }
-
-function hapus(i){ data.splice(i,1); saveState(); render(); }
-
-// ====== UPDATE CARDS LOGIKA V13.7 = INCLUDES ======
-function updateCards(){
-  let masuk=0, keluar=0, piutang=0, utang=0, sisaHarian=0;
-  data.forEach(r=>{
-    if(r.ket==='Masuk'){masuk+=r.nominal; sisaHarian+=r.nominal;}
-    if(r.ket==='Keluar'){keluar+=r.nominal; sisaHarian-=r.nominal;}
-    let c = r.catatan.toLowerCase().trim(); let v = r.nominal;
-    if(c.includes('hutang')) utang += v; if(c.includes('nyaur')) utang -= v;
-    if(c.includes('dipinjam')) piutang += v; if(c.includes('kembali')) piutang -= v;
-  });
-  document.getElementById('saldo').textContent = 'Rp '+(masuk-keluar).toLocaleString('id-ID');
-  document.getElementById('masuk').textContent = 'Rp '+masuk.toLocaleString('id-ID');
-  document.getElementById('keluar').textContent = 'Rp '+keluar.toLocaleString('id-ID');
-  document.getElementById('piutang').textContent = 'Rp '+piutang.toLocaleString('id-ID');
-  document.getElementById('utang').textContent = 'Rp '+utang.toLocaleString('id-ID');
-  document.getElementById('harian').textContent = 'Rp '+sisaHarian.toLocaleString('id-ID');
-  document.getElementById('totalSaldoFoot').textContent = 'Rp '+(masuk-keluar).toLocaleString('id-ID');
-}
-
-// ====== EXPORT EXCEL ======
-btnExport.onclick = ()=>{
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
-  XLSX.writeFile(wb, "Cashflow_V13.8.8.xlsx");
-}
-
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 render();
-updateBtn();
 </script>
 </body>
 </html>

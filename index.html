@@ -2,105 +2,144 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Cashflow</title>
 <style>
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#3b82f6 0%,#1d4ed8 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px}
- .card{background:#fff;border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.15);padding:24px;width:100%;max-width:380px;text-align:center}
-  .icon{font-size:40px;margin-bottom:8px}
-  h1{margin:0 0 20px;font-size:28px;color:#2563eb;font-weight:800}
-  label{font-size:12px;color:#6b7280;letter-spacing:1px;font-weight:600}
- .saldo-box{display:flex;align-items:center;gap:8px;margin:10px 0 16px}
- .saldo{flex:1;background:#f0f9ff;border:2px solid #38bdf8;border-radius:14px;padding:14px;font-size:20px;font-weight:700;color:#2563eb}
-  .eye{width:48px;height:48px;border-radius:50%;background:#0ea5e9;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px}
-  .input-wrap{display:flex;gap:8px}
-  input{flex:1;padding:14px 16px;border-radius:14px;border:1.5px solid #e5e7eb;font-size:14px;outline:none}
-  input:focus{border-color:#38bdf8}
-  .btn-simpan{padding:14px 20px;border-radius:14px;border:0;background:#0ea5e9;color:#fff;font-weight:700;cursor:pointer}
-  .petunjuk{font-size:12px;color:#6b7280;text-align:left;margin:12px 4px 0;line-height:1.6}
-  .btn-detail{margin-top:14px;width:100%;padding:14px;border-radius:14px;border:0;background:#2dd4bf;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+:root{--biru:#0ea5e9;--biru-gelap:#2563eb;--tosca:#2dd4bf;--merah:#ef4444;--hijau:#10b981}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,var(--biru-gelap),var(--biru));margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:28px;padding:28px;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.25);text-align:center}
+.logo{font-size:36px;margin-bottom:8px}
+h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px}
+.label{font-size:13px;color:#6b7280;letter-spacing:1.2px;margin-bottom:10px;font-weight:700}
+.saldo-box{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.saldo{flex:1;border:2.5px solid var(--biru);border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:var(--biru-gelap);background:#f0f9ff}
+.eye{background:var(--biru);color:#fff;border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;flex-shrink:0}
+.input-wrap{display:flex;gap:10px;margin-bottom:8px}
+.input{flex:1;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;transition:.2s}
+.input:focus{outline:none;border-color:var(--biru)}
+.input.error{border-color:var(--merah);background:#fef2f2}
+.input.success{border-color:var(--hijau);background:#f0fdf4}
+.btn-simpan{background:var(--biru);color:#fff;border:none;border-radius:18px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer}
+.btn-simpan:hover{opacity:.9}
+.btn-detail{width:100%;background:var(--tosca);color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px}
+.btn-detail:hover{opacity:.9}
+.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left;line-height:1.4}
+.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px;transition:.2s}
+.notif.error{color:var(--merah)}
+.notif.success{color:var(--hijau)}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">💵</div>
-    <h1>Cashflow</h1>
-
-    <label>SALDO SAAT INI</label>
-    <div class="saldo-box">
-      <div class="saldo" id="saldo">Rp *******</div>
-      <div class="eye" id="btnEye">👁️</div>
-    </div>
-
-    <div class="input-wrap">
-      <input id="inputTxt" placeholder="isi dengan benar dan teliti">
-      <button class="btn-simpan" id="btnSimpan">Simpan</button>
-    </div>
-
-    <div class="petunjuk">
-      Masuk: gaji, upah, dapat, hutang+nama<br>
-      Keluar: beli, bayar+nama, nyaur+nama, jajan
-    </div>
-
-    <button class="btn-detail" onclick="location.href='detail.html'">Lihat Detail →</button>
+<div class="box">
+  <div class="logo">💵</div>
+  <h1>Cashflow</h1>
+  <div class="label">SALDO SAAT INI</div>
+  <div class="saldo-box">
+    <div class="saldo" id="saldo">Rp *******</div>
+    <button class="eye" id="eye">👁️</button>
   </div>
+  <form id="form">
+    <div class="input-wrap">
+      <input class="input" id="cat" placeholder="isi dengan benar dan teliti" required>
+      <button class="btn-simpan">Simpan</button>
+    </div>
+    <div class="notif" id="notif"></div>
+  </form>
+  <div class="hint">
+    Masuk: gaji, upah, dapat, hutang+nama<br>
+    Keluar: beli, bayar+nama, nyaur+nama, jajan
+  </div>
+  <button class="btn-detail" onclick="location.href='/detail.html'">Lihat Detail →</button>
+</div>
 
 <script>
-/* ========= SETTINGS ========= */
-const KEY = 'cashflow'; // <-- INI KUNCINYA, HARUS SAMA DENGAN DETAIL
-const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
+const KEY='cashflow_v13';
+let showSaldo=false;
+const inputEl=document.getElementById('cat');
+const notifEl=document.getElementById('notif');
 
-/* ========= STATE ========= */
-let data = JSON.parse(localStorage.getItem(KEY)) || [];
-let showSaldo = false;
+const KEYWORDS={
+  masuk:['gaji','upah','dapat'],
+  masukNama:['hutang','kembali'],
+  keluar:['beli','jajan'],
+  keluarNama:['bayar','nyaur','dipinjam']
+}
 
-const $ = s => document.querySelector(s);
+const showNotif=(msg,type)=>{
+  notifEl.textContent=msg;
+  notifEl.className='notif '+type;
+  inputEl.className='input '+type;
+  setTimeout(()=>{
+    notifEl.textContent='';
+    notifEl.className='notif';
+    inputEl.className='input';
+  },2500);
+}
 
-/* ========= INIT ========= */
+const parseStrict=(txt)=>{
+  txt=txt.trim();
+  const lower=txt.toLowerCase();
+  const jml=Number(lower.match(/\d+/g)?.join('')||0);
+  if(jml===0) return {err:'Nominal gak ketemu bang'};
+
+  const kata=lower.replace(/\d+/g,'').trim().split(/\s+/);
+  const key=kata[0];
+  const sisa=kata.slice(1).join(' ');
+
+  // 1. Cek Masuk tanpa nama
+  if(KEYWORDS.masuk.includes(key)) return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 2. Cek Masuk wajib nama
+  if(KEYWORDS.masukNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama. Contoh: ${key} Budi ${jml}`};
+    return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  // 3. Cek Keluar tanpa nama
+  if(KEYWORDS.keluar.includes(key)) return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 4. Cek Keluar wajib nama
+  if(KEYWORDS.keluarNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama/tujuan. Contoh: ${key} Kos ${jml}`};
+    return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  return {err:'Keyword tidak valid. Cek hint di bawah'};
+}
+
+const renderSaldo=()=>{
+  const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  document.getElementById('saldo').textContent=showSaldo?`Rp ${saldo.toLocaleString('id-ID')}`:'Rp *******';
+}
 renderSaldo();
 
-/* ========= EVENTS ========= */
-$('#btnEye').addEventListener('click', ()=>{
-  showSaldo = !showSaldo;
+document.getElementById('eye').onclick=()=>{
+  showSaldo=!showSaldo;
   renderSaldo();
-});
+}
 
-$('#btnSimpan').addEventListener('click', ()=>{
-  const txt = $('#inputTxt').value.trim().toLowerCase();
-  if(!txt){ alert('Isi dulu bang'); return; }
+document.getElementById('form').onsubmit=e=>{
+  e.preventDefault();
+  const txt=inputEl.value.trim();
+  if(!txt){showNotif('Input jangan kosong bang','error');return}
 
-  // Logika Keyword dari petunjuk kamu
-  let jenis = 'out'; 
-  let nama = txt;
+  const res=parseStrict(txt);
+  if(res.err){showNotif(res.err,'error');return}
 
-  if(txt.includes('gaji')||txt.includes('upah')||txt.includes('dapat')||txt.includes('hutang')){
-    jenis='in';
+  try{
+    const tgl=new Date().toLocaleDateString('id-ID');
+    const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+    data.push({t:tgl,ket:res.ket,c:res.cat,n:'',jml:res.jml});
+    localStorage.setItem(KEY,JSON.stringify(data));
+
+    showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success');
+    inputEl.value='';
+    renderSaldo();
+  }catch(err){
+    showNotif('Gagal simpan. Storage penuh','error');
   }
-  if(txt.includes('beli')||txt.includes('bayar')||txt.includes('nyaur')||txt.includes('jajan')){
-    jenis='out';
-  }
-
-  const angka = txt.match(/\d+/g);
-  if(!angka){ alert('Masukkan nominal juga. Contoh: gaji 500000'); return; }
-  const jumlah = Number(angka.join(''));
-
-  const catatan = txt.replace(/\d+/g,'').trim();
-  const tgl = new Date().toISOString().slice(0,10);
-  const kategori = catatan.split(' ')[0] || 'Lainnya';
-
-  data.push({id:crypto.randomUUID(), tgl, jenis, kategori, jumlah, catatan});
-  localStorage.setItem(KEY, JSON.stringify(data)); // <-- SIMPAN PAKE KEY SAMA
-  $('#inputTxt').value='';
-  renderSaldo();
-});
-
-/* ========= RENDER ========= */
-function renderSaldo(){
-  const sumIn = data.filter(d=>d.jenis==='in').reduce((a,b)=>a+b.jumlah,0);
-  const sumOut = data.filter(d=>d.jenis==='out').reduce((a,b)=>a+b.jumlah,0);
-  const saldo = sumIn - sumOut;
-  $('#saldo').textContent = showSaldo ? FMT.format(saldo) : 'Rp *******';
-  $('#btnEye').textContent = showSaldo ? '🙈' : '👁️';
 }
 </script>
 </body>

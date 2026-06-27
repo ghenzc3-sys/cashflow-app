@@ -1,274 +1,189 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Detail Cashflow</title>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Cashflow V13.7</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{
-  --biru:#2563eb;--biru-muda:#0ea5e9;--hijau:#10b981;--merah:#ef4444;--orange:#f97316;--ungu:#8b5cf6;--hijau-tua2:#059669;--abu-tua:#6b7280;
-  --abu:#F3F4F6;--biru-soft:#dbeafe;--hijau-soft:#d1fae5;--merah-soft:#fee2e2;--orange-soft:#ffedd5;--ungu-soft:#ede9fe;--hijau-tua:#065f46;--merah-tua:#b91c1c}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Segoe UI',sans-serif;background:#f3f4f6;margin:0;padding:16px}
-.box{background:#fff;border-radius:20px;padding:20px;max-width:1000px;margin:0 auto;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.head-left{display:flex;align-items:center;gap:12px}
-.head h1{font-size:20px;font-weight:900;color:var(--biru);margin:0}
-.head span{font-size:24px}
-.btn-head-top{display:flex;gap:6px}
-.btn-head-top button{border:none;background:var(--abu-tua);color:#fff;border-radius:8px;padding:6px 8px;font-size:14px;cursor:pointer;display:flex;align-items:center}
-.btn-head-top button:disabled{background:#d1d5db;cursor:not-allowed;opacity:.6}
-.btn-excel{background:var(--hijau-tua2)!important}
-.top{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px}
-.mid{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:16px;align-items:center}
-.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:12px;text-align:center}
-.card.l{font-size:11px;font-weight:800;color:#6b7280;margin-bottom:4px;line-height:1.2}
-.card.v{font-size:16px;font-weight:900;padding:4px;border-radius:8px}
-.v.biru{color:var(--biru);background:var(--biru-soft)}
-.v.biru-muda{color:var(--biru-muda);background:var(--biru-soft)}
-.v.hijau{color:var(--hijau);background:var(--hijau-soft)}
-.v.merah{color:var(--merah);background:var(--merah-soft)}
-.v.orange{color:var(--orange);background:var(--orange-soft)}
-.v.ungu{color:var(--ungu);background:var(--ungu-soft)}
-.tbl-wrap{overflow-x:auto;border-radius:14px;border:1px solid #e5e7eb}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}
-thead{background:var(--biru);color:#fff;position:sticky;top:0}
-th,td{padding:10px 8px;text-align:center;border-bottom:1px solid #e5e7eb;white-space:nowrap}
-tbody tr:nth-child(even){background:var(--abu)}
-.masuk{color:var(--biru-muda);font-weight:800}
-.keluar{color:var(--merah);font-weight:800}
-.sisa-plus{background:var(--hijau-soft)!important;font-weight:900;color:var(--hijau-tua)}
-.sisa-minus{background:var(--merah-soft)!important;font-weight:900;color:var(--merah-tua)}
-tfoot td{font-weight:900;background:var(--biru);color:#fff}
-.btn-del{border:none;background:var(--merah);color:#fff;border-radius:8px;padding:4px 8px;font-size:12px;cursor:pointer}
-.btn-head{display:flex;gap:6px}
-.btn-head a,.btn-head button{border:none;border-radius:10px;padding:8px 10px;font-weight:800;font-size:12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
-.btn-reset{background:var(--merah);color:#fff}
-.btn-back{background:var(--biru);color:#fff}
-@media(max-width:700px){.top{grid-template-columns:repeat(2,1fr)}.mid{grid-template-columns:1fr}.card.v{font-size:14px}}
+  body{font-family:'Inter',sans-serif;background:#f8fafc}
+ .card{box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1)}
+ .btn-del{background:#ef4444;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
+ .btn-del:hover{background:#dc2626}
+ .btn-undo{background:#64748b;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:600}
+ .btn-undo:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
-<body>
-<div class="box">
-  <div class="head">
-    <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.6</h1></div>
-    <div class="btn-head-top">
-      <button id="undo" title="Undo 5x">↩️</button>
-      <button id="redo" title="Redo 5x">↪️</button>
-      <button class="btn-excel" id="export" title="Export Excel">📊</button>
+<body class="p-4 md:p-6">
+
+<div class="max-w-7xl mx-auto">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold text-slate-800">Detail Cashflow V13.7</h1>
+    <div class="flex gap-2">
+      <button id="btnUndo" class="btn-undo">↶ Undo</button>
+      <button id="btnRedo" class="btn-undo">↷ Redo</button>
+      <button id="btnExport" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold">Export Excel</button>
     </div>
   </div>
 
-  <div class="top">
-    <div class="card"><div class="l">Saldo Kas</div><div class="v biru" id="kas">Rp 0</div></div>
-    <div class="card"><div class="l">Total Masuk</div><div class="v biru-muda" id="masuk">Rp 0</div></div>
-    <div class="card"><div class="l">Total Keluar</div><div class="v merah" id="keluar">Rp 0</div></div>
-    <div class="card"><div class="l">Piutang</div><div class="v hijau" id="piutang">Rp 0</div></div>
-    <div class="card"><div class="l">Utang</div><div class="v orange" id="utang">Rp 0</div></div>
+  <!-- Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Saldo Kas</p><p id="saldo" class="text-xl font-bold text-slate-800">Rp 0</p></div>
+    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Uang Masuk</p><p id="masuk" class="text-xl font-bold text-green-600">Rp 0</p></div>
+    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Uang Keluar</p><p id="keluar" class="text-xl font-bold text-red-600">Rp 0</p></div>
+    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Piutang</p><p id="piutang" class="text-xl font-bold text-green-600">Rp 0</p></div>
+    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Utang</p><p id="utang" class="text-xl font-bold text-orange-600">Rp 0</p></div>
   </div>
 
-  <div class="mid">
-    <div class="card"><div class="l">Uang Harian</div><div class="v ungu" id="harian">Rp 0</div></div>
-    <div class="btn-head">
-      <button class="btn-reset" id="kosong" title="Kosongkan">🗑️</button>
-      <a href="/" class="btn-back" title="Kembali Input">←</a>
-    </div>
+  <div class="card bg-white p-4 rounded-xl mb-6">
+    <p class="text-sm text-slate-500">Uang Harian</p>
+    <p id="harian" class="text-2xl font-bold text-blue-600">Rp 0</p>
   </div>
 
-  <div class="tbl-wrap">
-    <table id="tabelCashflow">
-      <thead>
-        <tr><th>No</th><th>Tgl</th><th>Ket</th><th>Catatan</th><th>Nama</th><th>Nominal</th><th>Sisa Harian</th><th></th></tr>
+  <!-- Tabel -->
+  <div class="card bg-white rounded-xl overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-100 text-slate-600">
+        <tr>
+          <th class="p-3 text-left">Tanggal</th>
+          <th class="p-3 text-left">Keterangan</th>
+          <th class="p-3 text-left">Catatan</th>
+          <th class="p-3 text-right">Nominal</th>
+          <th class="p-3 text-right">Sisa Harian</th>
+          <th class="p-3 text-center">Aksi</th>
+        </tr>
       </thead>
-      <tbody id="body"></tbody>
-      <tfoot>
-        <tr><td colspan="7" style="text-align:right">TOTAL SALDO KAS</td><td id="tTotal">Rp 0</td></tr>
-      </tfoot>
+      <tbody id="tbody"></tbody>
     </table>
   </div>
 </div>
 
 <script>
-const KEY='cashflow_v13';
-const HISTORY_KEY='cashflow_history_v13';
-const HISTORY_LIMIT=5;
-let history=[], historyIndex=-1;
-let isNavigatingHistory = false; // <-- KUNCI ANTI KACAU
+// ====== DATA DUMMY KAMU ======
+let data = [
+  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Gaji', nominal:5000000},
+  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Makan', nominal:50000},
+  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Hutang pak joko', nominal:50000},
+  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Nyaur pak joko', nominal:5000},
+  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Dipinjam bu eni', nominal:60000},
+  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Kembali bu eni', nominal:5000},
+];
 
-const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
-const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+// ====== HISTORY UNTUK UNDO/REDO ======
+let history = [JSON.stringify(data)];
+let historyIndex = 0;
+let isNavigatingHistory = false; // KUNCI ANTI KACAU
 
-const saveHistoryToStorage=()=>{
-  localStorage.setItem(HISTORY_KEY,JSON.stringify({h:history,i:historyIndex}));
-}
+const tbody = document.getElementById('tbody');
+const btnUndo = document.getElementById('btnUndo');
+const btnRedo = document.getElementById('btnRedo');
 
-const loadHistoryFromStorage=()=>{
-  const saved=localStorage.getItem(HISTORY_KEY);
-  if(saved){
-    const parsed=JSON.parse(saved);
-    history=parsed.h||[localStorage.getItem(KEY)||'[]'];
-    historyIndex=parsed.i??history.length-1;
-  }else{
-    history=[localStorage.getItem(KEY)||'[]'];
-    historyIndex=0;
-  }
-}
-
-const save=(d)=>{ // <-- Gak pake pushHist lagi. Biar gak salah pake
-  localStorage.setItem(KEY,JSON.stringify(d));
-  if(!isNavigatingHistory){ // <-- CUMA SAVE HISTORY KALAU BUKAN LAGI UNDO/REDO
-    pushHistory(d);
-  }
-  render();
-}
-
-const pushHistory=(state)=>{
-  history=history.slice(0,historyIndex+1); // Potong history 'masa depan' kalau ada
-  history.push(JSON.stringify(state));
-  if(history.length>HISTORY_LIMIT){
-    history.shift();
-  }
-  historyIndex=history.length-1;
-  saveHistoryToStorage();
+function saveState(){
+  if(isNavigatingHistory) return; // JANGAN SIMPAN SAAT UNDO/REDO
+  history = history.slice(0, historyIndex + 1);
+  history.push(JSON.stringify(data));
+  historyIndex++;
   updateUndoRedoBtn();
 }
 
-const updateUndoRedoBtn=()=>{
-  document.getElementById('undo').disabled=historyIndex<=0;
-  document.getElementById('redo').disabled=historyIndex>=history.length-1;
+function updateUndoRedoBtn(){
+  btnUndo.disabled = historyIndex <= 0;
+  btnRedo.disabled = historyIndex >= history.length - 1;
 }
 
-const cLow=d=>d.toLowerCase().trim();
-
-const render=()=>{
-  const d=getData();const body=document.getElementById('body');body.innerHTML='';
-  let totalMasuk=0, totalKeluar=0, piutang=0, utang=0;
-  d.forEach(i=>{
-    const cat=cLow(i.c||'');const jml=i.jml;
-    if(i.ket==='Masuk'){
-      totalMasuk+=jml;
-      if(cat==='kembali') piutang-=jml;
-      if(cat==='hutang') utang+=jml;
-    }else{
-      totalKeluar+=jml;
-      if(cat==='dipinjam') piutang+=jml;
-      if(cat==='nyaur') utang-=jml;
-    }
-  });
-  const saldoKas=totalMasuk-totalKeluar;
-  const now=new Date();
-  const lastDay=new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
-  const today=now.getDate();
-  const sisaHari=Math.max(1, lastDay-today+1);
-  const uangHarian=saldoKas/sisaHari;
-
-  document.getElementById('kas').innerText=rupiah(saldoKas);
-  document.getElementById('masuk').innerText=rupiah(totalMasuk);
-  document.getElementById('keluar').innerText=rupiah(totalKeluar);
-  document.getElementById('piutang').innerText=rupiah(Math.max(0, piutang));
-  document.getElementById('utang').innerText=rupiah(Math.max(0, utang));
-  document.getElementById('harian').innerText=rupiah(uangHarian);
-  document.getElementById('tTotal').innerText=rupiah(saldoKas);
-
-  const byDate={};d.forEach(i=>{byDate[i.t]=byDate[i.t]||[];byDate[i.t].push(i)});
-  let saldoSebelumnya=0;let idx=1;
-  Object.keys(byDate).sort((a,b)=>new Date(a.split('/').reverse().join('-'))-new Date(b.split('/').reverse().join('-'))).forEach(tgl=>{
-    const list=byDate[tgl];
-    const totalMasukTgl=list.filter(i=>i.ket==='Masuk').reduce((s,i)=>s+i.jml,0);
-    const totalKeluarTgl=list.filter(i=>i.ket==='Keluar').reduce((s,i)=>s+i.jml,0);
-    const sisaHarian=saldoSebelumnya+totalMasukTgl-totalKeluarTgl;
-    let zebra=0;
-    list.forEach((i,j)=>{
-      body.insertAdjacentHTML('beforeend',`
-        <tr style="background:${zebra?'var(--abu)':'#fff'}">
-          <td>${idx++}</td><td>${i.t}</td><td class="${i.ket==='Masuk'?'masuk':'keluar'}">${i.ket}</td><td>${i.c||'-'}</td><td>${i.n||'-'}</td><td class="${i.ket==='Masuk'?'masuk':'keluar'}">${rupiah(i.jml)}</td>
-          <td class="${j===list.length-1? (sisaHarian < 0? 'sisa-minus' : 'sisa-plus') : ''}">${j===list.length-1?rupiah(sisaHarian):''}</td>
-          <td><button class="btn-del" onclick="hapus(${d.indexOf(i)})">X</button></td>
-        </tr>`);zebra=zebra^1;
-    });
-    saldoSebelumnya=sisaHarian;
-  });
-}
-
-window.hapus=idx=>{
-  if(confirm('Hapus data ini?')){
-    const d=getData();d.splice(idx,1);
-    save(d); // <-- Ini pasti push history baru
-  }
-}
-document.getElementById('kosong').onclick=()=>{
-  if(confirm('Yakin kosongkan semua data?')){
-    save([]); // <-- Ini pasti push history baru
-  }
-}
-
-document.getElementById('undo').onclick=()=>{
-  if(historyIndex>0){
-    isNavigatingHistory = true; // <-- KUNCI: Kasih tau "lagi Undo nih"
+btnUndo.onclick = ()=>{
+  if(historyIndex > 0){
+    isNavigatingHistory = true;
     historyIndex--;
-    localStorage.setItem(KEY, history[historyIndex]); // Tiban data langsung, tanpa save()
+    data = JSON.parse(history[historyIndex]);
     render();
-    saveHistoryToStorage();
+    isNavigatingHistory = false;
     updateUndoRedoBtn();
-    isNavigatingHistory = false; // <-- Selesai Undo
   }
 }
-document.getElementById('redo').onclick=()=>{
-  if(historyIndex<history.length-1){
-    isNavigatingHistory = true; // <-- KUNCI: Kasih tau "lagi Redo nih"
+
+btnRedo.onclick = ()=>{
+  if(historyIndex < history.length - 1){
+    isNavigatingHistory = true;
     historyIndex++;
-    localStorage.setItem(KEY, history[historyIndex]); // Tiban data langsung, tanpa save()
+    data = JSON.parse(history[historyIndex]);
     render();
-    saveHistoryToStorage();
+    isNavigatingHistory = false;
     updateUndoRedoBtn();
-    isNavigatingHistory = false; // <-- Selesai Redo
   }
 }
 
-document.getElementById('export').onclick=()=>{
-  const d=getData();
-  if(d.length===0){alert('Data kosong, gak ada yg di export');return}
+// ====== RENDER TABEL ======
+function render(){
+  tbody.innerHTML = '';
+  let sisaHarian = 0;
+  
+  data.forEach((r,i)=>{
+    if(r.ket==='Masuk') sisaHarian += r.nominal;
+    else sisaHarian -= r.nominal;
 
-  const kas = document.getElementById('kas').innerText;
-  const masuk = document.getElementById('masuk').innerText;
-  const keluar = document.getElementById('keluar').innerText;
-  const piutang = document.getElementById('piutang').innerText;
-  const utang = document.getElementById('utang').innerText;
-  const harian = document.getElementById('harian').innerText;
-  const total = document.getElementById('tTotal').innerText;
-
-  const ws_data = [
-    ['LAPORAN CASHFLOW'],[],['RANGKUMAN'],
-    ['Saldo Kas', kas],['Total Masuk', masuk],['Total Keluar', keluar],
-    ['Piutang', piutang],['Utang', utang],['Uang Harian', harian],
-    [],['DETAIL TRANSAKSI'],['No','Tanggal','Keterangan','Catatan','Nama','Nominal','Sisa Harian']
-  ];
-
-  const byDate={};d.forEach(i=>{byDate[i.t]=byDate[i.t]||[];byDate[i.t].push(i)});
-  let saldoSebelumnya=0;let idx=1;
-  Object.keys(byDate).sort((a,b)=>new Date(a.split('/').reverse().join('-'))-new Date(b.split('/').reverse().join('-'))).forEach(tgl=>{
-    const list=byDate[tgl];
-    const totalMasukTgl=list.filter(i=>i.ket==='Masuk').reduce((s,i)=>s+i.jml,0);
-    const totalKeluarTgl=list.filter(i=>i.ket==='Keluar').reduce((s,i)=>s+i.jml,0);
-    const sisaHarian=saldoSebelumnya+totalMasukTgl-totalKeluarTgl;
-    list.forEach((i,j)=>{
-      ws_data.push([idx++,i.t,i.ket,i.c||'-',i.n||'-',i.jml,j===list.length-1? sisaHarian : '']);
-    });
-    saldoSebelumnya=sisaHarian;
+    const tr = document.createElement('tr');
+    tr.className = 'border-b hover:bg-slate-50';
+    tr.innerHTML = `
+      <td class="p-3">${r.tanggal}</td>
+      <td class="p-3">${r.ket}</td>
+      <td class="p-3">${r.catatan}</td>
+      <td class="p-3 text-right font-semibold">Rp ${r.nominal.toLocaleString('id-ID')}</td>
+      <td class="p-3 text-right font-semibold">Rp ${sisaHarian.toLocaleString('id-ID')}</td>
+      <td class="p-3 text-center"><button class="btn-del" onclick="hapus(${i})">X</button></td>
+    `;
+    tbody.appendChild(tr);
   });
-  ws_data.push([]);
-  ws_data.push(['','TOTAL SALDO KAS','','',total]);
-
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Cashflow Laporan');
-  XLSX.writeFile(wb, `cashflow_laporan_${new Date().toISOString().slice(0,10)}.xlsx`);
+  updateCards();
 }
 
-// Inisialisasi
-loadHistoryFromStorage();
+function hapus(i){
+  data.splice(i,1);
+  saveState(); // SIMPAN SETELAH HAPUS
+  render();
+}
+
+// ====== UPDATE CARDS V13.7 - PAKAI INCLUDES ======
+function updateCards(){
+  let masuk=0, keluar=0, piutang=0, utang=0, sisaHarian=0;
+  
+  data.forEach(r=>{
+    if(r.ket==='Masuk'){
+      masuk+=r.nominal;
+      sisaHarian+=r.nominal;
+    }
+    if(r.ket==='Keluar'){
+      keluar+=r.nominal;
+      sisaHarian-=r.nominal;
+    }
+    
+    let c = r.catatan.toLowerCase().trim();
+    let v = r.nominal;
+    // KUNCI: pake includes biar "Hutang pak joko" kehitung
+    if(c.includes('hutang')) utang += v;
+    if(c.includes('nyaur')) utang -= v;
+    if(c.includes('dipinjam')) piutang += v;
+    if(c.includes('kembali')) piutang -= v;
+  });
+  
+  document.getElementById('saldo').textContent = 'Rp '+(masuk-keluar).toLocaleString('id-ID');
+  document.getElementById('masuk').textContent = 'Rp '+masuk.toLocaleString('id-ID');
+  document.getElementById('keluar').textContent = 'Rp '+keluar.toLocaleString('id-ID');
+  document.getElementById('piutang').textContent = 'Rp '+piutang.toLocaleString('id-ID');
+  document.getElementById('utang').textContent = 'Rp '+utang.toLocaleString('id-ID');
+  document.getElementById('harian').textContent = 'Rp '+sisaHarian.toLocaleString('id-ID');
+}
+
+// ====== EXPORT EXCEL ======
+document.getElementById('btnExport').onclick = ()=>{
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
+  XLSX.writeFile(wb, "Cashflow_V13.7.xlsx");
+}
+
+// ====== INIT ======
 render();
 updateUndoRedoBtn();
 </script>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -53,7 +52,7 @@ tfoot td{font-weight:900;background:var(--biru);color:#fff}
 <body>
 <div class="box">
   <div class="head">
-    <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.4</h1></div>
+    <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.5</h1></div>
     <div class="btn-head-top">
       <button id="undo" title="Undo 5x">↩️</button>
       <button id="redo" title="Redo 5x">↪️</button>
@@ -80,11 +79,11 @@ tfoot td{font-weight:900;background:var(--biru);color:#fff}
   <div class="tbl-wrap">
     <table id="tabelCashflow">
       <thead>
-        <tr><th>No</th><th>Tgl</th><th>Ket</th><th>Catatan</th><th>Nama</th><th>Nominal</th><th>Sisa Harian</th></tr>
+        <tr><th>No</th><th>Tgl</th><th>Ket</th><th>Catatan</th><th>Nama</th><th>Nominal</th><th>Sisa Harian</th><th></th></tr>
       </thead>
       <tbody id="body"></tbody>
       <tfoot>
-        <tr><td colspan="6" style="text-align:right">TOTAL SALDO KAS</td><td id="tTotal">Rp 0</td></tr>
+        <tr><td colspan="7" style="text-align:right">TOTAL SALDO KAS</td><td id="tTotal">Rp 0</td></tr>
       </tfoot>
     </table>
   </div>
@@ -182,6 +181,7 @@ const render=()=>{
         <tr style="background:${zebra?'var(--abu)':'#fff'}">
           <td>${idx++}</td><td>${i.t}</td><td class="${i.ket==='Masuk'?'masuk':'keluar'}">${i.ket}</td><td>${i.c||'-'}</td><td>${i.n||'-'}</td><td class="${i.ket==='Masuk'?'masuk':'keluar'}">${rupiah(i.jml)}</td>
           <td class="${j===list.length-1? (sisaHarian < 0? 'sisa-minus' : 'sisa-plus') : ''}">${j===list.length-1?rupiah(sisaHarian):''}</td>
+          <td><button class="btn-del" onclick="hapus(${d.indexOf(i)})">X</button></td>
         </tr>`);zebra=zebra^1;
     });
     saldoSebelumnya=sisaHarian;
@@ -242,7 +242,7 @@ document.getElementById('export').onclick=()=>{
     ['Uang Harian', harian],
     [],
     ['DETAIL TRANSAKSI'],
-    ['No','Tanggal','Keterangan','Catatan','Nama','Nominal','Sisa Harian']
+    ['No','Tanggal','Keterangan','Catatan','Nama','Nominal','Sisa Harian'] // <-- Kolom X dibuang di sini
   ];
 
   // 2. Isi Tabel Manual dari data, bukan dari HTML. 100% aman.

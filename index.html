@@ -1,1 +1,72 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cashflow</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#3b82f6,#1d4ed8);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:24px;padding:24px;width:100%;max-width:380px;box-shadow:0 20px 40px rgba(0,0,0,.15);text-align:center}
+.box.icon{font-size:40px;margin-bottom:8px}
+.box h1{font-size:28px;font-weight:800;color:#2563eb;margin-bottom:16px}
+.l{font-size:12px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:8px}
+.saldo{border:2px solid #93c5fd;border-radius:16px;padding:16px;background:#eff6ff;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.saldo.v{font-size:22px;font-weight:800;color:#2563eb}
+.eye{background:#3b82f6;border:none;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer}
+.row{display:flex;gap:8px;margin-bottom:8px}
+input{flex:1;padding:14px;border:2px solid #e5e7eb;border-radius:12px;font-size:15px;outline:none}
+.btn{padding:14px 18px;border:none;border-radius:12px;background:#0ea5e9;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+.info{font-size:11px;color:#6b7280;text-align:left;line-height:1.5;margin:12px 0}
+.link{width:100%;padding:14px;border:none;border-radius:14px;background:#2dd4bf;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">💵</div>
+  <h1>Cashflow</h1>
+  <div class="l">SALDO SAAT INI</div>
+  <div class="saldo">
+    <div class="saldo v" id="kas">Rp *******</div>
+    <button class="eye" id="eye">👁️</button>
+  </div>
+  <div class="row">
+    <input id="inp" placeholder="isi dengan benar dan teliti">
+    <button class="btn" id="save">Simpan</button>
+  </div>
+  <div class="info">
+    Masuk: gaji, upah, dapat, hutang+nama<br>
+    Keluar: beli, bayar+nama, nyaur+nama, jajan
+  </div>
+  <button class="link" onclick="location.href='/detail.html'">Lihat Detail →</button>
+</div>
+<script>
+const KEY='cashflow'; // KEY lama
+let show=false;
+const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+const saveData=d=>localStorage.setItem(KEY,JSON.stringify(d));
+const render=()=>{
+  const d=getData();
+  const total=d.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  document.getElementById('kas').innerText=show?rupiah(total):'Rp *******';
+}
+document.getElementById('eye').onclick=()=>{show=!show;render()}
+const parse=t=>{
+  t=t.toLowerCase();
+  const m=t.match(/(\d[\d\.]*)/);if(!m)return null;
+  const jml=Number(m[1].replace(/\./g,''));
+  const ket=t.includes('gaji')||t.includes('upah')||t.includes('dapat')||t.includes('hutang')?'Masuk':'Keluar';
+  return{t:new Date().toLocaleDateString('id-ID'),ket,jml,id:Date.now()};
+}
+document.getElementById('save').onclick=()=>{
+  const d=parse(document.getElementById('inp').value);
+  if(!d){alert('Format salah');return}
+  const all=getData();all.push(d);saveData(all);
+  document.getElementById('inp').value='';render();
+}
+render();
+</script>
+</body>
+</html>

@@ -90,7 +90,7 @@ function saveState(){
   if(isNavigatingHistory) return;
   history = history.slice(0, historyIndex + 1);
   history.push(JSON.stringify(data));
-  localStorage.setItem('cashflowData', JSON.stringify(data));
+  localStorage.setItem('cashflow_v13', JSON.stringify(data));
   historyIndex++;
   updateBtn();
 }

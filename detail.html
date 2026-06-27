@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.3</title>
+<title>Detail Cashflow V13.8.3 Mod</title>
 <style>
   body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px}
 .wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:20px}
@@ -28,30 +28,31 @@
 .btn-x{background:#ef4444;color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
 .total-row{background:#3b82f6;color:#fff;font-weight:700}
 .top-btns{display:flex;gap:8px;position:absolute;right:20px;top:20px}
-.top-btns button{width:32px;height:32px;border:0;border-radius:8px;cursor:pointer;font-size:16px}
+.top-btns button{height:32px;border:0;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;padding:0 12px}
 .btn-undo{background:#64748b;color:#fff}
 .btn-redo{background:#64748b;color:#fff}
-.btn-export{background:#22c55e;color:#fff;font-size:12px;font-weight:700;padding:0 12px;width:auto}
+.btn-export{background:#22c55e;color:#fff}
+.btn-kosongkan{background:#f97316;color:#fff}
+.btn-back{background:#3b82f6;color:#fff}
 .rel{position:relative}
-.btn-harian{display:inline-flex;gap:6px;margin-left:8px}
-.btn-harian button{width:28px;height:28px;border:0;border-radius:8px;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
   <div class="wrap rel">
     <div class="top-btns">
+      <button class="btn-back" onclick="location.href='index.html'">Back</button>
+      <button class="btn-kosongkan" id="btnKosongkan">Kosongkan</button>
       <button class="btn-undo" title="Undo">↶</button>
       <button class="btn-redo" title="Redo">↷</button>
-      <button class="btn-export" title="Export">Export</button>
+      <button class="btn-export" id="btnExport">Export</button>
     </div>
-    <h1>📊 Detail Cashflow V13.8.3</h1>
+    <h1>📊 Detail Cashflow V13.8.3 Mod</h1>
     
     <div class="stats" id="stats"></div>
     
     <div class="harian">
       Uang Harian
       <b id="uangHarian">Rp 0</b>
-      <span class="btn-harian"><button id="btnPlus">+</button><button id="btnMinus">-</button></span>
     </div>
 
     <table id="tbl">
@@ -65,16 +66,13 @@
 const KEY = 'cashflow_v1383';
 const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
 
-// DATA CONTOH SESUAI FOTO KAMU
+// DATA CONTOH 3 BARIS MINUS SESUAI FOTO LAPTOPMU
 let data = [
-  {id:'1',tgl:'2026-09-04',jenis:'in',ket:'Gaji',catatan:'-',nama:'-',jumlah:5000000},
-  {id:'2',tgl:'2026-09-04',jenis:'out',ket:'Makan',catatan:'-',nama:'-',jumlah:50000},
-  {id:'3',tgl:'2026-09-04',jenis:'in',ket:'Hutang pak joko',catatan:'-',nama:'pak joko',jumlah:50000},
-  {id:'4',tgl:'2026-09-04',jenis:'out',ket:'Nyusur pak joko',catatan:'-',nama:'pak joko',jumlah:5000},
-  {id:'5',tgl:'2026-09-04',jenis:'out',ket:'Dipinjam bu eni',catatan:'-',nama:'bu eni',jumlah:60000},
-  {id:'6',tgl:'2026-09-04',jenis:'in',ket:'Kembali bu eni',catatan:'-',nama:'bu eni',jumlah:5000},
+  {id:'1',tgl:'2026-09-04',jenis:'out',ket:'Nyusur pak joko',catatan:'-',nama:'pak joko',jumlah:5000},
+  {id:'2',tgl:'2026-09-04',jenis:'out',ket:'Dipinjam bu eni',catatan:'-',nama:'bu eni',jumlah:60000},
+  {id:'3',tgl:'2026-09-04',jenis:'in',ket:'Kembali bu eni',catatan:'-',nama:'bu eni',jumlah:5000},
 ];
-localStorage.setItem(KEY,JSON.stringify(data)); // Biar langsung muncul datanya
+localStorage.setItem(KEY,JSON.stringify(data));
 
 let history = [JSON.stringify(data)];
 let historyIndex = 0;
@@ -115,11 +113,33 @@ function render(){
     if(r.jenis==='in') sisa += r.jumlah;
   });
 }
+
 function hapus(id){ data=data.filter(x=>x.id!==id); saveHistory(); localStorage.setItem(KEY,JSON.stringify(data)); render(); }
-document.getElementById('btnPlus').onclick = ()=>{ alert('Fitur + : Input Masuk'); }
-document.getElementById('btnMinus').onclick = ()=>{ alert('Fitur - : Input Keluar'); }
+
+// 1. EXPORT CSV BENERAN
+document.getElementById('btnExport').onclick = ()=>{
+  let csv = 'No,Tgl,Ket,Catatan,Nama,Jenis,Nominal\n';
+  data.forEach((r,i)=>{
+    csv += `${i+1},${r.tgl},${r.ket},${r.catatan},${r.nama},${r.jenis},${r.jumlah}\n`;
+  });
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cashflow_v1383.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// 2. KOSONGKAN CUMA DI DETAIL SAJA, GAK KE INDEX
+document.getElementById('btnKosongkan').onclick = ()=>{
+  if(confirm('Kosongkan semua data di halaman ini? Data index aman.')){
+    data = []; saveHistory(); localStorage.setItem(KEY,JSON.stringify(data)); render();
+  }
+}
+
+// 3. UNDO REDO
 document.querySelector('.btn-undo').onclick = ()=>{ if(historyIndex>0){historyIndex--;data=JSON.parse(history[historyIndex]);render();}}
 document.querySelector('.btn-redo').onclick = ()=>{ if(historyIndex<history.length-1){historyIndex++;data=JSON.parse(history[historyIndex]);render();}}
+
 render();
 </script>
 </body>

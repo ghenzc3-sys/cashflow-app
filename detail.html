@@ -79,7 +79,7 @@
 
 <script>
 // ====== LOGIKA LAMA: BACA DARI LOCALSTORAGE ======
-let data = JSON.parse(localStorage.getItem('cashflowData')) || [];
+let data = JSON.parse(localStorage.getItem(KEY)) || [];
 
 // ====== HISTORY UNDO/REDO ======
 let history = [JSON.stringify(data)];

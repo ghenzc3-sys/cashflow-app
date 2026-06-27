@@ -140,9 +140,10 @@ btnRedo.onclick = ()=>{
   }
 }
 
-// TOMBOL KEMBALI = UNDO
-btnKembali.onclick = ()=>{ btnUndo.click(); }
-
+// TOMBOL KEMBALI = BALIK KE INDEX.HTML
+btnKembali.onclick = ()=>{ 
+  window.location.href = 'index.html'; 
+}
 // TOMBOL KOSONGKAN = HAPUS SEMUA DATA
 btnKosongkan.onclick = ()=>{
   if(confirm('Yakin kosongkan semua data?')){

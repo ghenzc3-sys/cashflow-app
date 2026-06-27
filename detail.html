@@ -5,56 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detail Cashflow V13.8.3</title>
 <style>
-  body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px;padding-bottom:80px} /* padding bawah buat tombol fixed */
- .wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:20px}
+  body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px}
+.wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:20px}
   h1{margin:0 0 16px;font-size:18px;color:#3b82f6;display:flex;gap:8px;align-items:center}
- .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
- .stat{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:10px;text-align:center}
- .stat label{font-size:12px;color:#6b7280;display:block}
- .stat.val{font-size:16px;font-weight:700;color:#2563eb}
- .stat.val.danger{color:#dc2626}
- 
- /* UANG HARIAN + TOMBOL KOSONGKAN SEJAJAR KIRI */
- .harian-wrap{display:flex;align-items:center;gap:12px;margin:12px 0 20px}
- .btn-kosongkan{background:#ef4444;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:600}
- .harian{text-align:center;flex:1;color:#6b7280;font-size:14px}
- .harian b{color:#8b5cf6;font-size:18px;display:block}
-
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.stat{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:10px;text-align:center}
+.stat.label{font-size:12px;color:#6b7280;display:block}
+.stat.val{font-size:16px;font-weight:700;color:#2563eb}
+.stat.val.danger{color:#dc2626}
+.stat.val.hijau{color:#16a34a}
+.stat.val.orange{color:#ea580c}
+.harian{text-align:center;margin:12px 0 20px;color:#6b7280;font-size:14px}
+.harian b{color:#8b5cf6;font-size:18px;display:block}
   table{width:100%;border-collapse:collapse;font-size:14px}
   thead{background:#3b82f6;color:#fff}
   th,td{padding:10px;text-align:left}
   th{font-weight:600}
   tbody tr:nth-child(even){background:#f9fafb}
- .right{text-align:right}
- .keluar{color:#dc2626;font-weight:600}
- .masuk{color:#2563eb;font-weight:600}
- .btn-x{background:#ef4444;color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
- .total-row{background:#3b82f6;color:#fff;font-weight:700}
- .top-btns{display:flex;gap:8px;position:absolute;right:20px;top:20px}
- .top-btns button{width:32px;height:32px;border:0;border-radius:8px;cursor:pointer;font-size:16px}
- .btn-export{background:#22c55e;color:#fff}
- .rel{position:relative}
-
- /* TOMBOL INPUT FIXED DI BAWAH */
- .btn-input-fixed{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99;padding:14px 28px;border-radius:12px;border:0;background:#3b82f6;color:#fff;font-weight:700;font-size:15px;box-shadow:0 8px 20px rgba(59,130,246,.4);cursor:pointer}
+.right{text-align:right}
+.keluar{color:#dc2626;font-weight:600}
+.masuk{color:#2563eb;font-weight:600}
+.btn-x{background:#ef4444;color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
+.total-row{background:#3b82f6;color:#fff;font-weight:700}
+.top-btns{display:flex;gap:8px;position:absolute;right:20px;top:20px}
+.top-btns button{width:32px;height:32px;border:0;border-radius:8px;cursor:pointer;font-size:16px}
+.btn-undo{background:#64748b;color:#fff}
+.btn-redo{background:#64748b;color:#fff}
+.btn-export{background:#22c55e;color:#fff;font-size:12px;font-weight:700;padding:0 12px;width:auto}
+.rel{position:relative}
+.btn-harian{display:inline-flex;gap:6px;margin-left:8px}
+.btn-harian button{width:28px;height:28px;border:0;border-radius:8px;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
   <div class="wrap rel">
     <div class="top-btns">
+      <button class="btn-undo" title="Undo">↶</button>
+      <button class="btn-redo" title="Redo">↷</button>
       <button class="btn-export" title="Export">Export</button>
     </div>
     <h1>📊 Detail Cashflow V13.8.3</h1>
     
     <div class="stats" id="stats"></div>
     
-    <div class="harian-wrap">
-      <button class="btn-kosongkan" id="btnKosongkan">Kosongkan</button> <!-- 1. PINDAH KIRI -->
-      <div class="harian">
-        Uang Harian
-        <b id="uangHarian">Rp 0</b>
-      </div>
-      <div style="width:92px"></div> <!-- Spacer biar tengah beneran tengah -->
+    <div class="harian">
+      Uang Harian
+      <b id="uangHarian">Rp 0</b>
+      <span class="btn-harian"><button id="btnPlus">+</button><button id="btnMinus">-</button></span>
     </div>
 
     <table id="tbl">
@@ -64,12 +61,29 @@
     </table>
   </div>
 
-  <button class="btn-input-fixed" onclick="location.href='index.html'">Input</button> <!-- 2. TOMBOL FIXED NAMA INPUT -->
-
 <script>
-const KEY = 'cashflow_v1383'; // PAKE KEY V13.8.3 KAMU
+const KEY = 'cashflow_v1383';
 const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
-let data = JSON.parse(localStorage.getItem(KEY)) || [];
+
+// DATA CONTOH SESUAI FOTO KAMU
+let data = [
+  {id:'1',tgl:'2026-09-04',jenis:'in',ket:'Gaji',catatan:'-',nama:'-',jumlah:5000000},
+  {id:'2',tgl:'2026-09-04',jenis:'out',ket:'Makan',catatan:'-',nama:'-',jumlah:50000},
+  {id:'3',tgl:'2026-09-04',jenis:'in',ket:'Hutang pak joko',catatan:'-',nama:'pak joko',jumlah:50000},
+  {id:'4',tgl:'2026-09-04',jenis:'out',ket:'Nyusur pak joko',catatan:'-',nama:'pak joko',jumlah:5000},
+  {id:'5',tgl:'2026-09-04',jenis:'out',ket:'Dipinjam bu eni',catatan:'-',nama:'bu eni',jumlah:60000},
+  {id:'6',tgl:'2026-09-04',jenis:'in',ket:'Kembali bu eni',catatan:'-',nama:'bu eni',jumlah:5000},
+];
+localStorage.setItem(KEY,JSON.stringify(data)); // Biar langsung muncul datanya
+
+let history = [JSON.stringify(data)];
+let historyIndex = 0;
+
+function saveHistory(){
+  history = history.slice(0,historyIndex+1);
+  history.push(JSON.stringify(data));
+  historyIndex++;
+}
 
 function render(){
   const sumIn = data.filter(d=>d.jenis==='in').reduce((a,b)=>a+b.jumlah,0);
@@ -80,30 +94,32 @@ function render(){
   const harian = Math.floor(saldo/30);
 
   document.getElementById('stats').innerHTML = `
-    <div class="stat"><label>Saldo Kas</label><div class="val ${saldo<0?'danger':''}">${FMT.format(saldo)}</div></div>
-    <div class="stat"><label>Total Masuk</label><div class="val">${FMT.format(sumIn)}</div></div>
-    <div class="stat"><label>Total Keluar</label><div class="val danger">${FMT.format(sumOut)}</div></div>
-    <div class="stat"><label>Piutang</label><div class="val" style="color:#16a34a">${FMT.format(piutang)}</div></div>
-    <div class="stat"><label>Utang</label><div class="val danger">${FMT.format(utang)}</div></div>`;
+    <div class="stat"><span class="label">Saldo Kas</span><div class="val ${saldo<0?'danger':''}">${FMT.format(saldo)}</div></div>
+    <div class="stat"><span class="label">Total Masuk</span><div class="val">${FMT.format(sumIn)}</div></div>
+    <div class="stat"><span class="label">Total Keluar</span><div class="val danger">${FMT.format(sumOut)}</div></div>
+    <div class="stat"><span class="label">Piutang</span><div class="val hijau">${FMT.format(piutang)}</div></div>
+    <div class="stat"><span class="label">Utang</span><div class="val orange">${FMT.format(utang)}</div></div>`;
   document.getElementById('uangHarian').textContent = FMT.format(harian);
   document.getElementById('totalSaldo').textContent = FMT.format(saldo);
 
   const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML='';
-  let sisa = 0;
+  let sisa = saldo;
   data.sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach((r,i)=>{
-    if(i===0) sisa = saldo;
     if(r.jenis==='out') sisa -= r.jumlah;
-    if(r.jenis==='in' && i>0) sisa += r.jumlah;
     tbody.innerHTML += `<tr>
       <td>${i+1}</td><td>${r.tgl.split('-').reverse().join('/')}</td>
       <td class="${r.jenis}">${r.ket}</td><td>${r.catatan}</td><td>${r.nama}</td>
-      <td class="right">${FMT.format(r.jumlah)}</td><td class="right">${FMT.format(sisa)}</td>
+      <td class="right ${r.jenis}">${FMT.format(r.jumlah)}</td><td class="right">${FMT.format(sisa)}</td>
       <td><button class="btn-x" onclick="hapus('${r.id}')">X</button></td>
     </tr>`;
+    if(r.jenis==='in') sisa += r.jumlah;
   });
 }
-function hapus(id){ if(confirm('Hapus data ini?')){ data=data.filter(x=>x.id!==id); localStorage.setItem(KEY,JSON.stringify(data)); render(); }}
-document.getElementById('btnKosongkan').onclick = ()=>{ if(confirm('Kosongkan semua data?')){ data=[]; localStorage.setItem(KEY,'[]'); render(); }} // 1. LOGIKA KOSONGKAN
+function hapus(id){ data=data.filter(x=>x.id!==id); saveHistory(); localStorage.setItem(KEY,JSON.stringify(data)); render(); }
+document.getElementById('btnPlus').onclick = ()=>{ alert('Fitur + : Input Masuk'); }
+document.getElementById('btnMinus').onclick = ()=>{ alert('Fitur - : Input Keluar'); }
+document.querySelector('.btn-undo').onclick = ()=>{ if(historyIndex>0){historyIndex--;data=JSON.parse(history[historyIndex]);render();}}
+document.querySelector('.btn-redo').onclick = ()=>{ if(historyIndex<history.length-1){historyIndex++;data=JSON.parse(history[historyIndex]);render();}}
 render();
 </script>
 </body>

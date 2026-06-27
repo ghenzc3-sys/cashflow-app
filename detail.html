@@ -3,60 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.7</title>
+<title>Detail Cashflow V13.8</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  body{font-family:'Inter',sans-serif;background:#f8fafc}
- .card{box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1)}
- .btn-del{background:#ef4444;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
+  body{font-family:'Inter',sans-serif;background:#f1f5f9}
+  th{background:#2563eb;color:#fff;font-weight:600;font-size:13px}
+  td{font-size:13px}
+ .btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
  .btn-del:hover{background:#dc2626}
- .btn-undo{background:#64748b;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:600}
- .btn-undo:disabled{opacity:.4;cursor:not-allowed}
+ .btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
+ .btn-kembali{background:#ef4444;color:#fff}
+ .btn-kosongkan{background:#3b82f6;color:#fff}
 </style>
 </head>
-<body class="p-4 md:p-6">
+<body class="p-3">
 
-<div class="max-w-7xl mx-auto">
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-2xl font-bold text-slate-800">Detail Cashflow V13.7</h1>
-    <div class="flex gap-2">
-      <button id="btnUndo" class="btn-undo">↶ Undo</button>
-      <button id="btnRedo" class="btn-undo">↷ Redo</button>
-      <button id="btnExport" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold">Export Excel</button>
+<div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-4">
+  
+  <!-- HEADER -->
+  <div class="flex items-center gap-2 mb-3">
+    <span class="text-xl">📊</span>
+    <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8</h1>
+  </div>
+
+  <!-- CARDS KECIL -->
+  <div class="grid grid-cols-5 gap-2 mb-3 text-center">
+    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Saldo Kas</p><p id="saldo" class="text-sm font-bold text-blue-600">Rp 0</p></div>
+    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Total Masuk</p><p id="masuk" class="text-sm font-bold text-blue-300">Rp 0</p></div>
+    <div class="bg-slate-100 rounded-lg p-2"><p class="text-xs text-slate-600">Total Keluar</p><p id="keluar" class="text-sm font-bold text-red-400">Rp 0</p></div>
+    <div class="bg-green-100 rounded-lg p-2"><p class="text-xs text-slate-600">Piutang</p><p id="piutang" class="text-sm font-bold text-green-600">Rp 0</p></div>
+    <div class="bg-orange-100 rounded-lg p-2"><p class="text-xs text-slate-600">Utang</p><p id="utang" class="text-sm font-bold text-orange-600">Rp 0</p></div>
+  </div>
+
+  <!-- UANG HARIAN + TOMBOL KEMBALI/KOSONGKAN -->
+  <div class="bg-violet-100 rounded-lg p-2 flex justify-between items-center mb-3">
+    <div class="text-center w-full">
+      <p class="text-xs text-slate-600">Uang Harian</p>
+      <p id="harian" class="text-sm font-bold text-violet-700">Rp 0</p>
+    </div>
+    <div class="flex gap-1 ml-2">
+      <button id="btnKosongkan" class="btn-top btn-kosongkan">🗑</button>
+      <button id="btnKembali" class="btn-top btn-kembali">←</button>
     </div>
   </div>
 
-  <!-- Cards -->
-  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Saldo Kas</p><p id="saldo" class="text-xl font-bold text-slate-800">Rp 0</p></div>
-    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Uang Masuk</p><p id="masuk" class="text-xl font-bold text-green-600">Rp 0</p></div>
-    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Uang Keluar</p><p id="keluar" class="text-xl font-bold text-red-600">Rp 0</p></div>
-    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Piutang</p><p id="piutang" class="text-xl font-bold text-green-600">Rp 0</p></div>
-    <div class="card bg-white p-4 rounded-xl"><p class="text-sm text-slate-500">Utang</p><p id="utang" class="text-xl font-bold text-orange-600">Rp 0</p></div>
-  </div>
-
-  <div class="card bg-white p-4 rounded-xl mb-6">
-    <p class="text-sm text-slate-500">Uang Harian</p>
-    <p id="harian" class="text-2xl font-bold text-blue-600">Rp 0</p>
-  </div>
-
-  <!-- Tabel -->
-  <div class="card bg-white rounded-xl overflow-x-auto">
-    <table class="w-full text-sm">
-      <thead class="bg-slate-100 text-slate-600">
+  <!-- TABEL BIRU -->
+  <div class="overflow-x-auto rounded-lg border-blue-500">
+    <table class="w-full">
+      <thead>
         <tr>
-          <th class="p-3 text-left">Tanggal</th>
-          <th class="p-3 text-left">Keterangan</th>
-          <th class="p-3 text-left">Catatan</th>
-          <th class="p-3 text-right">Nominal</th>
-          <th class="p-3 text-right">Sisa Harian</th>
-          <th class="p-3 text-center">Aksi</th>
+          <th class="p-2">No</th>
+          <th class="p-2">Tgl</th>
+          <th class="p-2">Ket</th>
+          <th class="p-2">Catatan</th>
+          <th class="p-2">Nama</th>
+          <th class="p-2 text-right">Nominal</th>
+          <th class="p-2 text-right">Sisa Harian</th>
+          <th class="p-2 text-center">Aksi</th>
         </tr>
       </thead>
-      <tbody id="tbody"></tbody>
+      <tbody id="tbody" class="bg-white"></tbody>
+      <tfoot>
+        <tr class="bg-blue-600 text-white font-bold">
+          <td colspan="7" class="p-2 text-right">TOTAL SALDO KAS</td>
+          <td id="totalSaldoFoot" class="p-2 text-right">Rp 0</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
+
+  <!-- TOMBOL BAWAH DITUTUP DULU -->
+  <div class="hidden">
+    <button id="btnUndo"></button>
+    <button id="btnRedo"></button>
+    <button id="btnExport"></button>
+  </div>
+
 </div>
 
 <script>
@@ -70,52 +93,47 @@ let data = [
   {tanggal:'2026-09-04', ket:'Masuk', catatan:'Kembali bu eni', nominal:5000},
 ];
 
-// ====== HISTORY UNTUK UNDO/REDO ======
+// ====== HISTORY UNDO/REDO TETEP ADA DI BELAKANG LAYAR ======
 let history = [JSON.stringify(data)];
 let historyIndex = 0;
-let isNavigatingHistory = false; // KUNCI ANTI KACAU
+let isNavigatingHistory = false;
 
-const tbody = document.getElementById('tbody');
 const btnUndo = document.getElementById('btnUndo');
 const btnRedo = document.getElementById('btnRedo');
+const btnExport = document.getElementById('btnExport');
+const btnKembali = document.getElementById('btnKembali');
+const btnKosongkan = document.getElementById('btnKosongkan');
 
 function saveState(){
-  if(isNavigatingHistory) return; // JANGAN SIMPAN SAAT UNDO/REDO
+  if(isNavigatingHistory) return;
   history = history.slice(0, historyIndex + 1);
   history.push(JSON.stringify(data));
   historyIndex++;
-  updateUndoRedoBtn();
 }
 
-function updateUndoRedoBtn(){
-  btnUndo.disabled = historyIndex <= 0;
-  btnRedo.disabled = historyIndex >= history.length - 1;
-}
-
-btnUndo.onclick = ()=>{
+// TOMBOL KEMBALI = UNDO
+btnKembali.onclick = ()=>{
   if(historyIndex > 0){
     isNavigatingHistory = true;
     historyIndex--;
     data = JSON.parse(history[historyIndex]);
     render();
     isNavigatingHistory = false;
-    updateUndoRedoBtn();
   }
 }
 
-btnRedo.onclick = ()=>{
-  if(historyIndex < history.length - 1){
-    isNavigatingHistory = true;
-    historyIndex++;
-    data = JSON.parse(history[historyIndex]);
+// TOMBOL KOSONGKAN = HAPUS SEMUA DATA
+btnKosongkan.onclick = ()=>{
+  if(confirm('Yakin kosongkan semua data?')){
+    data = [];
+    saveState();
     render();
-    isNavigatingHistory = false;
-    updateUndoRedoBtn();
   }
 }
 
-// ====== RENDER TABEL ======
+// ====== RENDER TABEL STYLE LAMA ======
 function render(){
+  const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
   let sisaHarian = 0;
   
@@ -123,15 +141,20 @@ function render(){
     if(r.ket==='Masuk') sisaHarian += r.nominal;
     else sisaHarian -= r.nominal;
 
+    const warnaKet = r.ket==='Masuk'? 'text-blue-600' : 'text-red-600';
+    const warnaNom = r.ket==='Masuk'? 'text-blue-600' : 'text-red-600';
+
     const tr = document.createElement('tr');
-    tr.className = 'border-b hover:bg-slate-50';
+    tr.className = i%2? 'bg-slate-50' : 'bg-white';
     tr.innerHTML = `
-      <td class="p-3">${r.tanggal}</td>
-      <td class="p-3">${r.ket}</td>
-      <td class="p-3">${r.catatan}</td>
-      <td class="p-3 text-right font-semibold">Rp ${r.nominal.toLocaleString('id-ID')}</td>
-      <td class="p-3 text-right font-semibold">Rp ${sisaHarian.toLocaleString('id-ID')}</td>
-      <td class="p-3 text-center"><button class="btn-del" onclick="hapus(${i})">X</button></td>
+      <td class="p-2 text-center">${i+1}</td>
+      <td class="p-2">${r.tanggal.split('-').reverse().join('/')}</td>
+      <td class="p-2 font-semibold ${warnaKet}">${r.ket}</td>
+      <td class="p-2">${r.catatan}</td>
+      <td class="p-2 text-center">-</td>
+      <td class="p-2 text-right font-semibold ${warnaNom}">Rp ${r.nominal.toLocaleString('id-ID')}</td>
+      <td class="p-2 text-right font-semibold ${i===data.length-1?'bg-green-100':''}">Rp ${sisaHarian.toLocaleString('id-ID')}</td>
+      <td class="p-2 text-center"><button class="btn-del" onclick="hapus(${i})">X</button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -140,27 +163,18 @@ function render(){
 
 function hapus(i){
   data.splice(i,1);
-  saveState(); // SIMPAN SETELAH HAPUS
+  saveState();
   render();
 }
 
-// ====== UPDATE CARDS V13.7 - PAKAI INCLUDES ======
+// ====== UPDATE CARDS LOGIKA V13.7 TETEP ======
 function updateCards(){
   let masuk=0, keluar=0, piutang=0, utang=0, sisaHarian=0;
-  
   data.forEach(r=>{
-    if(r.ket==='Masuk'){
-      masuk+=r.nominal;
-      sisaHarian+=r.nominal;
-    }
-    if(r.ket==='Keluar'){
-      keluar+=r.nominal;
-      sisaHarian-=r.nominal;
-    }
-    
+    if(r.ket==='Masuk'){masuk+=r.nominal; sisaHarian+=r.nominal;}
+    if(r.ket==='Keluar'){keluar+=r.nominal; sisaHarian-=r.nominal;}
     let c = r.catatan.toLowerCase().trim();
     let v = r.nominal;
-    // KUNCI: pake includes biar "Hutang pak joko" kehitung
     if(c.includes('hutang')) utang += v;
     if(c.includes('nyaur')) utang -= v;
     if(c.includes('dipinjam')) piutang += v;
@@ -173,19 +187,18 @@ function updateCards(){
   document.getElementById('piutang').textContent = 'Rp '+piutang.toLocaleString('id-ID');
   document.getElementById('utang').textContent = 'Rp '+utang.toLocaleString('id-ID');
   document.getElementById('harian').textContent = 'Rp '+sisaHarian.toLocaleString('id-ID');
+  document.getElementById('totalSaldoFoot').textContent = 'Rp '+(masuk-keluar).toLocaleString('id-ID');
 }
 
-// ====== EXPORT EXCEL ======
-document.getElementById('btnExport').onclick = ()=>{
+// EXPORT TETEP HIDUP TAPI DISEMBUNYIKAN
+btnExport.onclick = ()=>{
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
-  XLSX.writeFile(wb, "Cashflow_V13.7.xlsx");
+  XLSX.writeFile(wb, "Cashflow_V13.8.xlsx");
 }
 
-// ====== INIT ======
 render();
-updateUndoRedoBtn();
 </script>
 </body>
 </html>

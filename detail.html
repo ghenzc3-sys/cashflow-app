@@ -3,61 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.6</title>
+<title>Detail Cashflow</title>
 <style>
-  :root{--bg:#0f172a;--card:#1e293b;--muted:#94a3b8;--text:#e2e8f0;--accent:#38bdf8}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  header{padding:16px 20px;background:var(--card);border-bottom:1px solid #0b1220;position:sticky;top:0}
-  header h1{margin:0;font-size:18px}
-  main{padding:16px;max-width:1100px;margin:0 auto}
- .card{background:var(--card);border:1px solid #0b1220;border-radius:14px;padding:16px;margin-bottom:16px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:8px;border-bottom:1px solid #0b1220;vertical-align:top}
-  th{text-align:left;color:var(--muted);font-weight:600}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#f3f4f6;padding:16px}
+ .card{background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);padding:20px;max-width:800px;margin:0 auto}
+  h1{margin:0 0 12px;font-size:20px;color:#2563eb}
+  a{color:#2563eb;text-decoration:none;font-size:14px}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+  th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}
+  th{color:#6b7280;font-weight:600}
  .right{text-align:right}
- .nowrap{white-space:nowrap}
- .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid #1f2937}
- .pill.in{background:#052e16;border-color:#14532d;color:#bbf7d0}
- .pill.out{background:#3f1d1d;border-color:#7f1d1d;color:#fecaca}
- .muted{color:var(--muted)}
+ .in{color:#16a34a;font-weight:700}
+ .out{color:#dc2626;font-weight:700}
+ .muted{color:#6b7280;text-align:center;padding:20px}
 </style>
 </head>
 <body>
-<header><h1>Detail Transaksi V13.8.6</h1></header>
-<main>
   <div class="card">
-    <table id="tblDetail">
-      <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Catatan</th><th class="right">Jumlah</th></tr></thead>
+    <h1>Detail Transaksi</h1>
+    <a href="index.html">← Kembali ke Input</a>
+    <table id="tbl">
+      <thead><tr><th>Tgl</th><th>Jenis</th><th>Catatan</th><th class="right">Jumlah</th></tr></thead>
       <tbody></tbody>
     </table>
-    <div id="kosong" class="muted" style="padding:12px;text-align:center">Belum ada data</div>
+    <div id="kosong" class="muted">Belum ada data. Input dulu di halaman utama.</div>
   </div>
-</main>
+
 <script>
-const KEY = 'cashflow_v13'; // <-- INI DOANG YANG DIGANTI, HARUS SAMA KAYAK INDEX
+const KEY = 'cashflow_app_final'; // <-- HARUS SAMA PERSIS DENGAN INDEX
 const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
 
-let data = JSON.parse(localStorage.getItem(KEY)) || []; // <-- INI KUNCINYA
+let data = JSON.parse(localStorage.getItem(KEY)) || [];
+console.log("DETAIL BACA:", data); // Buka F12 buat ngecek
 
-function render(){
-  const tbody = document.querySelector('#tblDetail tbody');
-  tbody.innerHTML='';
-  if(data.length===0){ document.getElementById('kosong').style.display='block'; return; }
+const tbody = document.querySelector('#tbl tbody');
+
+if(data.length===0){
+  document.getElementById('kosong').style.display='block';
+}else{
   document.getElementById('kosong').style.display='none';
-
-  data.sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach(r=>{
+  data.sort((a,b)=>b.tgl.localeCompare(a.tgl)).forEach(r=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td class="nowrap">${r.tgl}</td>
-      <td><span class="pill ${r.jenis==='in'?'in':'out'}">${r.jenis==='in'?'Masuk':'Keluar'}</span></td>
-      <td>${escapeHtml(r.kategori)}</td>
-      <td class="muted">${escapeHtml(r.catatan||'')}</td>
-      <td class="right nowrap">${FMT.format(r.jumlah)}</td>`;
+      <td>${r.tgl}</td>
+      <td class="${r.jenis}">${r.jenis==='in'?'Masuk':'Keluar'}</td>
+      <td>${r.catatan}</td>
+      <td class="right ${r.jenis}">${r.jenis==='in'?'+':''}${FMT.format(r.jumlah)}</td>`;
     tbody.appendChild(tr);
   });
 }
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-render();
 </script>
 </body>
 </html>

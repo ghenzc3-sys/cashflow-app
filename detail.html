@@ -3,55 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow</title>
+<title>Detail Cashflow V13.8.3</title>
 <style>
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#f3f4f6;padding:16px}
- .card{background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);padding:20px;max-width:800px;margin:0 auto}
-  h1{margin:0 0 12px;font-size:20px;color:#2563eb}
-  a{color:#2563eb;text-decoration:none;font-size:14px}
-  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
-  th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left}
-  th{color:#6b7280;font-weight:600}
+  body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px;padding-bottom:80px} /* padding bawah buat tombol fixed */
+ .wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:20px}
+  h1{margin:0 0 16px;font-size:18px;color:#3b82f6;display:flex;gap:8px;align-items:center}
+ .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+ .stat{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:10px;text-align:center}
+ .stat label{font-size:12px;color:#6b7280;display:block}
+ .stat.val{font-size:16px;font-weight:700;color:#2563eb}
+ .stat.val.danger{color:#dc2626}
+ 
+ /* UANG HARIAN + TOMBOL KOSONGKAN SEJAJAR KIRI */
+ .harian-wrap{display:flex;align-items:center;gap:12px;margin:12px 0 20px}
+ .btn-kosongkan{background:#ef4444;color:#fff;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:600}
+ .harian{text-align:center;flex:1;color:#6b7280;font-size:14px}
+ .harian b{color:#8b5cf6;font-size:18px;display:block}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead{background:#3b82f6;color:#fff}
+  th,td{padding:10px;text-align:left}
+  th{font-weight:600}
+  tbody tr:nth-child(even){background:#f9fafb}
  .right{text-align:right}
- .in{color:#16a34a;font-weight:700}
- .out{color:#dc2626;font-weight:700}
- .muted{color:#6b7280;text-align:center;padding:20px}
+ .keluar{color:#dc2626;font-weight:600}
+ .masuk{color:#2563eb;font-weight:600}
+ .btn-x{background:#ef4444;color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
+ .total-row{background:#3b82f6;color:#fff;font-weight:700}
+ .top-btns{display:flex;gap:8px;position:absolute;right:20px;top:20px}
+ .top-btns button{width:32px;height:32px;border:0;border-radius:8px;cursor:pointer;font-size:16px}
+ .btn-export{background:#22c55e;color:#fff}
+ .rel{position:relative}
+
+ /* TOMBOL INPUT FIXED DI BAWAH */
+ .btn-input-fixed{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99;padding:14px 28px;border-radius:12px;border:0;background:#3b82f6;color:#fff;font-weight:700;font-size:15px;box-shadow:0 8px 20px rgba(59,130,246,.4);cursor:pointer}
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Detail Transaksi</h1>
-    <a href="index.html">← Kembali ke Input</a>
+  <div class="wrap rel">
+    <div class="top-btns">
+      <button class="btn-export" title="Export">Export</button>
+    </div>
+    <h1>📊 Detail Cashflow V13.8.3</h1>
+    
+    <div class="stats" id="stats"></div>
+    
+    <div class="harian-wrap">
+      <button class="btn-kosongkan" id="btnKosongkan">Kosongkan</button> <!-- 1. PINDAH KIRI -->
+      <div class="harian">
+        Uang Harian
+        <b id="uangHarian">Rp 0</b>
+      </div>
+      <div style="width:92px"></div> <!-- Spacer biar tengah beneran tengah -->
+    </div>
+
     <table id="tbl">
-      <thead><tr><th>Tgl</th><th>Jenis</th><th>Catatan</th><th class="right">Jumlah</th></tr></thead>
+      <thead><tr><th>No</th><th>Tgl</th><th>Ket</th><th>Catatan</th><th>Nama</th><th>Nominal</th><th>Sisa Harian</th><th>Aksi</th></tr></thead>
       <tbody></tbody>
+      <tfoot><tr class="total-row"><td colspan="5" class="right">TOTAL SALDO KAS</td><td colspan="3" id="totalSaldo">Rp 0</td></tr></tfoot>
     </table>
-    <div id="kosong" class="muted">Belum ada data. Input dulu di halaman utama.</div>
   </div>
 
+  <button class="btn-input-fixed" onclick="location.href='index.html'">Input</button> <!-- 2. TOMBOL FIXED NAMA INPUT -->
+
 <script>
-const KEY = 'cashflow_app_final'; // <-- HARUS SAMA PERSIS DENGAN INDEX
+const KEY = 'cashflow_v1383'; // PAKE KEY V13.8.3 KAMU
 const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
-
 let data = JSON.parse(localStorage.getItem(KEY)) || [];
-console.log("DETAIL BACA:", data); // Buka F12 buat ngecek
 
-const tbody = document.querySelector('#tbl tbody');
+function render(){
+  const sumIn = data.filter(d=>d.jenis==='in').reduce((a,b)=>a+b.jumlah,0);
+  const sumOut = data.filter(d=>d.jenis==='out').reduce((a,b)=>a+b.jumlah,0);
+  const saldo = sumIn - sumOut;
+  const piutang = data.filter(d=>d.jenis==='in'&&d.nama!=='-').reduce((a,b)=>a+b.jumlah,0);
+  const utang = data.filter(d=>d.jenis==='out'&&d.nama!=='-').reduce((a,b)=>a+b.jumlah,0);
+  const harian = Math.floor(saldo/30);
 
-if(data.length===0){
-  document.getElementById('kosong').style.display='block';
-}else{
-  document.getElementById('kosong').style.display='none';
-  data.sort((a,b)=>b.tgl.localeCompare(a.tgl)).forEach(r=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r.tgl}</td>
-      <td class="${r.jenis}">${r.jenis==='in'?'Masuk':'Keluar'}</td>
-      <td>${r.catatan}</td>
-      <td class="right ${r.jenis}">${r.jenis==='in'?'+':''}${FMT.format(r.jumlah)}</td>`;
-    tbody.appendChild(tr);
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><label>Saldo Kas</label><div class="val ${saldo<0?'danger':''}">${FMT.format(saldo)}</div></div>
+    <div class="stat"><label>Total Masuk</label><div class="val">${FMT.format(sumIn)}</div></div>
+    <div class="stat"><label>Total Keluar</label><div class="val danger">${FMT.format(sumOut)}</div></div>
+    <div class="stat"><label>Piutang</label><div class="val" style="color:#16a34a">${FMT.format(piutang)}</div></div>
+    <div class="stat"><label>Utang</label><div class="val danger">${FMT.format(utang)}</div></div>`;
+  document.getElementById('uangHarian').textContent = FMT.format(harian);
+  document.getElementById('totalSaldo').textContent = FMT.format(saldo);
+
+  const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML='';
+  let sisa = 0;
+  data.sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach((r,i)=>{
+    if(i===0) sisa = saldo;
+    if(r.jenis==='out') sisa -= r.jumlah;
+    if(r.jenis==='in' && i>0) sisa += r.jumlah;
+    tbody.innerHTML += `<tr>
+      <td>${i+1}</td><td>${r.tgl.split('-').reverse().join('/')}</td>
+      <td class="${r.jenis}">${r.ket}</td><td>${r.catatan}</td><td>${r.nama}</td>
+      <td class="right">${FMT.format(r.jumlah)}</td><td class="right">${FMT.format(sisa)}</td>
+      <td><button class="btn-x" onclick="hapus('${r.id}')">X</button></td>
+    </tr>`;
   });
 }
+function hapus(id){ if(confirm('Hapus data ini?')){ data=data.filter(x=>x.id!==id); localStorage.setItem(KEY,JSON.stringify(data)); render(); }}
+document.getElementById('btnKosongkan').onclick = ()=>{ if(confirm('Kosongkan semua data?')){ data=[]; localStorage.setItem(KEY,'[]'); render(); }} // 1. LOGIKA KOSONGKAN
+render();
 </script>
 </body>
 </html>

@@ -52,7 +52,7 @@ tfoot td{font-weight:900;background:var(--biru);color:#fff}
 <body>
 <div class="box">
   <div class="head">
-    <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.0</h1></div>
+    <div class="head-left"><span>📊</span><h1>Detail Cashflow V13.1</h1></div>
     <div class="btn-head-top">
       <button id="undo" title="Undo 5x">↩️</button>
       <button id="redo" title="Redo 5x">↪️</button>
@@ -116,18 +116,18 @@ const loadHistoryFromStorage=()=>{
 
 const save=(d, pushHist=true)=>{
   localStorage.setItem(KEY,JSON.stringify(d));
-  if(pushHist) pushHistory(d); 
+  if(pushHist) pushHistory(d);
   render();
 }
 
 const pushHistory=(state)=>{
-  history=history.slice(0,historyIndex+1); // Buang redo stack
+  history=history.slice(0,historyIndex+1);
   history.push(JSON.stringify(state));
   if(history.length>HISTORY_LIMIT){
-    history.shift(); // Max 5
+    history.shift();
   }
   historyIndex=history.length-1;
-  saveHistoryToStorage(); // <--- INI KUNCINYA BANG
+  saveHistoryToStorage();
   updateUndoRedoBtn();
 }
 
@@ -191,7 +191,7 @@ const render=()=>{
 window.hapus=idx=>{
   if(confirm('Hapus data ini?')){
     const d=getData();d.splice(idx,1);
-    save(d); // Ini ke pushHistory otomatis
+    save(d);
   }
 }
 document.getElementById('kosong').onclick=()=>{
@@ -203,15 +203,17 @@ document.getElementById('kosong').onclick=()=>{
 document.getElementById('undo').onclick=()=>{
   if(historyIndex>0){
     historyIndex--;
-    save(JSON.parse(history[historyIndex]), false); // false = jangan push
-    saveHistoryToStorage(); // Update index
+    save(JSON.parse(history[historyIndex]), false);
+    saveHistoryToStorage();
+    updateUndoRedoBtn(); // FIX REDO: Refresh tombol
   }
 }
 document.getElementById('redo').onclick=()=>{
   if(historyIndex<history.length-1){
     historyIndex++;
     save(JSON.parse(history[historyIndex]), false);
-    saveHistoryToStorage(); // Update index
+    saveHistoryToStorage();
+    updateUndoRedoBtn(); // FIX REDO: Refresh tombol
   }
 }
 
@@ -227,7 +229,7 @@ document.getElementById('export').onclick=()=>{
 }
 
 // Inisialisasi
-loadHistoryFromStorage(); // <--- Load history pas buka
+loadHistoryFromStorage();
 render();
 updateUndoRedoBtn();
 </script>

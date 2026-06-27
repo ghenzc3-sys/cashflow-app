@@ -2,145 +2,145 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.3 Mod</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cashflow</title>
 <style>
-  body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px}
-.wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:20px}
-  h1{margin:0 0 16px;font-size:18px;color:#3b82f6;display:flex;gap:8px;align-items:center}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
-.stat{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:10px;text-align:center}
-.stat.label{font-size:12px;color:#6b7280;display:block}
-.stat.val{font-size:16px;font-weight:700;color:#2563eb}
-.stat.val.danger{color:#dc2626}
-.stat.val.hijau{color:#16a34a}
-.stat.val.orange{color:#ea580c}
-.harian{text-align:center;margin:12px 0 20px;color:#6b7280;font-size:14px}
-.harian b{color:#8b5cf6;font-size:18px;display:block}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  thead{background:#3b82f6;color:#fff}
-  th,td{padding:10px;text-align:left}
-  th{font-weight:600}
-  tbody tr:nth-child(even){background:#f9fafb}
-.right{text-align:right}
-.keluar{color:#dc2626;font-weight:600}
-.masuk{color:#2563eb;font-weight:600}
-.btn-x{background:#ef4444;color:#fff;border:0;border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700}
-.total-row{background:#3b82f6;color:#fff;font-weight:700}
-.top-btns{display:flex;gap:8px;position:absolute;right:20px;top:20px}
-.top-btns button{height:32px;border:0;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;padding:0 12px}
-.btn-undo{background:#64748b;color:#fff}
-.btn-redo{background:#64748b;color:#fff}
-.btn-export{background:#22c55e;color:#fff}
-.btn-kosongkan{background:#f97316;color:#fff}
-.btn-back{background:#3b82f6;color:#fff}
-.rel{position:relative}
+:root{--biru:#0ea5e9;--biru-gelap:#2563eb;--tosca:#2dd4bf;--merah:#ef4444;--hijau:#10b981}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,var(--biru-gelap),var(--biru));margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:28px;padding:28px;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.25);text-align:center}
+.logo{font-size:36px;margin-bottom:8px}
+h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px}
+.label{font-size:13px;color:#6b7280;letter-spacing:1.2px;margin-bottom:10px;font-weight:700}
+.saldo-box{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.saldo{flex:1;border:2.5px solid var(--biru);border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:var(--biru-gelap);background:#f0f9ff}
+.eye{background:var(--biru);color:#fff;border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;flex-shrink:0}
+.input-wrap{display:flex;gap:10px;margin-bottom:8px}
+.input{flex:1;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;transition:.2s}
+.input:focus{outline:none;border-color:var(--biru)}
+.input.error{border-color:var(--merah);background:#fef2f2}
+.input.success{border-color:var(--hijau);background:#f0fdf4}
+.btn-simpan{background:var(--biru);color:#fff;border:none;border-radius:18px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer}
+.btn-simpan:hover{opacity:.9}
+.btn-detail{width:100%;background:var(--tosca);color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px}
+.btn-detail:hover{opacity:.9}
+.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left;line-height:1.4}
+.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px;transition:.2s}
+.notif.error{color:var(--merah)}
+.notif.success{color:var(--hijau)}
 </style>
 </head>
 <body>
-  <div class="wrap rel">
-    <div class="top-btns">
-      <button class="btn-back" onclick="location.href='index.html'">Back</button>
-      <button class="btn-kosongkan" id="btnKosongkan">Kosongkan</button>
-      <button class="btn-undo" title="Undo">↶</button>
-      <button class="btn-redo" title="Redo">↷</button>
-      <button class="btn-export" id="btnExport">Export</button>
-    </div>
-    <h1>📊 Detail Cashflow V13.8.3 Mod</h1>
-    
-    <div class="stats" id="stats"></div>
-    
-    <div class="harian">
-      Uang Harian
-      <b id="uangHarian">Rp 0</b>
-    </div>
-
-    <table id="tbl">
-      <thead><tr><th>No</th><th>Tgl</th><th>Ket</th><th>Catatan</th><th>Nama</th><th>Nominal</th><th>Sisa Harian</th><th>Aksi</th></tr></thead>
-      <tbody></tbody>
-      <tfoot><tr class="total-row"><td colspan="5" class="right">TOTAL SALDO KAS</td><td colspan="3" id="totalSaldo">Rp 0</td></tr></tfoot>
-    </table>
+<div class="box">
+  <div class="logo">💵</div>
+  <h1>Cashflow</h1>
+  <div class="label">SALDO SAAT INI</div>
+  <div class="saldo-box">
+    <div class="saldo" id="saldo">Rp *******</div>
+    <button class="eye" id="eye">👁️</button>
   </div>
+  <form id="form">
+    <div class="input-wrap">
+      <input class="input" id="cat" placeholder="isi dengan benar dan teliti" required>
+      <button class="btn-simpan">Simpan</button>
+    </div>
+    <div class="notif" id="notif"></div>
+  </form>
+  <div class="hint">
+    Masuk: gaji, upah, dapat, hutang+nama<br>
+    Keluar: beli, bayar+nama, nyaur+nama, jajan
+  </div>
+  <button class="btn-detail" onclick="location.href='/detail.html'">Lihat Detail →</button>
+</div>
 
 <script>
-const KEY = 'cashflow';
-const FMT = new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
+const KEY='cashflow_v13';
+let showSaldo=false;
+const inputEl=document.getElementById('cat');
+const notifEl=document.getElementById('notif');
 
-// DATA CONTOH 3 BARIS MINUS SESUAI FOTO LAPTOPMU
-let data = [
-  {id:'1',tgl:'2026-09-04',jenis:'out',ket:'Nyusur pak joko',catatan:'-',nama:'pak joko',jumlah:5000},
-  {id:'2',tgl:'2026-09-04',jenis:'out',ket:'Dipinjam bu eni',catatan:'-',nama:'bu eni',jumlah:60000},
-  {id:'3',tgl:'2026-09-04',jenis:'in',ket:'Kembali bu eni',catatan:'-',nama:'bu eni',jumlah:5000},
-];
-localStorage.setItem(KEY,JSON.stringify(data));
-
-let history = [JSON.stringify(data)];
-let historyIndex = 0;
-
-function saveHistory(){
-  history = history.slice(0,historyIndex+1);
-  history.push(JSON.stringify(data));
-  historyIndex++;
+const KEYWORDS={
+  masuk:['gaji','upah','dapat'],
+  masukNama:['hutang','kembali'],
+  keluar:['beli','jajan'],
+  keluarNama:['bayar','nyaur','dipinjam']
 }
 
-function render(){
-  const sumIn = data.filter(d=>d.jenis==='in').reduce((a,b)=>a+b.jumlah,0);
-  const sumOut = data.filter(d=>d.jenis==='out').reduce((a,b)=>a+b.jumlah,0);
-  const saldo = sumIn - sumOut;
-  const piutang = data.filter(d=>d.jenis==='in'&&d.nama!=='-').reduce((a,b)=>a+b.jumlah,0);
-  const utang = data.filter(d=>d.jenis==='out'&&d.nama!=='-').reduce((a,b)=>a+b.jumlah,0);
-  const harian = Math.floor(saldo/30);
-
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><span class="label">Saldo Kas</span><div class="val ${saldo<0?'danger':''}">${FMT.format(saldo)}</div></div>
-    <div class="stat"><span class="label">Total Masuk</span><div class="val">${FMT.format(sumIn)}</div></div>
-    <div class="stat"><span class="label">Total Keluar</span><div class="val danger">${FMT.format(sumOut)}</div></div>
-    <div class="stat"><span class="label">Piutang</span><div class="val hijau">${FMT.format(piutang)}</div></div>
-    <div class="stat"><span class="label">Utang</span><div class="val orange">${FMT.format(utang)}</div></div>`;
-  document.getElementById('uangHarian').textContent = FMT.format(harian);
-  document.getElementById('totalSaldo').textContent = FMT.format(saldo);
-
-  const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML='';
-  let sisa = saldo;
-  data.sort((a,b)=>a.tgl.localeCompare(b.tgl)).forEach((r,i)=>{
-    if(r.jenis==='out') sisa -= r.jumlah;
-    tbody.innerHTML += `<tr>
-      <td>${i+1}</td><td>${r.tgl.split('-').reverse().join('/')}</td>
-      <td class="${r.jenis}">${r.ket}</td><td>${r.catatan}</td><td>${r.nama}</td>
-      <td class="right ${r.jenis}">${FMT.format(r.jumlah)}</td><td class="right">${FMT.format(sisa)}</td>
-      <td><button class="btn-x" onclick="hapus('${r.id}')">X</button></td>
-    </tr>`;
-    if(r.jenis==='in') sisa += r.jumlah;
-  });
+const showNotif=(msg,type)=>{
+  notifEl.textContent=msg;
+  notifEl.className='notif '+type;
+  inputEl.className='input '+type;
+  setTimeout(()=>{
+    notifEl.textContent='';
+    notifEl.className='notif';
+    inputEl.className='input';
+  },2500);
 }
 
-function hapus(id){ data=data.filter(x=>x.id!==id); saveHistory(); localStorage.setItem(KEY,JSON.stringify(data)); render(); }
+const parseStrict=(txt)=>{
+  txt=txt.trim();
+  const lower=txt.toLowerCase();
+  const jml=Number(lower.match(/\d+/g)?.join('')||0);
+  if(jml===0) return {err:'Nominal gak ketemu bang'};
 
-// 1. EXPORT CSV BENERAN
-document.getElementById('btnExport').onclick = ()=>{
-  let csv = 'No,Tgl,Ket,Catatan,Nama,Jenis,Nominal\n';
-  data.forEach((r,i)=>{
-    csv += `${i+1},${r.tgl},${r.ket},${r.catatan},${r.nama},${r.jenis},${r.jumlah}\n`;
-  });
-  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'cashflow_v1383.csv'; a.click();
-  URL.revokeObjectURL(url);
+  const kata=lower.replace(/\d+/g,'').trim().split(/\s+/);
+  const key=kata[0];
+  const sisa=kata.slice(1).join(' ');
+
+  // 1. Cek Masuk tanpa nama
+  if(KEYWORDS.masuk.includes(key)) return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 2. Cek Masuk wajib nama
+  if(KEYWORDS.masukNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama. Contoh: ${key} Budi ${jml}`};
+    return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  // 3. Cek Keluar tanpa nama
+  if(KEYWORDS.keluar.includes(key)) return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 4. Cek Keluar wajib nama
+  if(KEYWORDS.keluarNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama/tujuan. Contoh: ${key} Kos ${jml}`};
+    return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  return {err:'Keyword tidak valid. Cek hint di bawah'};
 }
 
-// 2. KOSONGKAN CUMA DI DETAIL SAJA, GAK KE INDEX
-document.getElementById('btnKosongkan').onclick = ()=>{
-  if(confirm('Kosongkan semua data di halaman ini? Data index aman.')){
-    data = []; saveHistory(); localStorage.setItem(KEY,JSON.stringify(data)); render();
+const renderSaldo=()=>{
+  const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  document.getElementById('saldo').textContent=showSaldo?`Rp ${saldo.toLocaleString('id-ID')}`:'Rp *******';
+}
+renderSaldo();
+
+document.getElementById('eye').onclick=()=>{
+  showSaldo=!showSaldo;
+  renderSaldo();
+}
+
+document.getElementById('form').onsubmit=e=>{
+  e.preventDefault();
+  const txt=inputEl.value.trim();
+  if(!txt){showNotif('Input jangan kosong bang','error');return}
+
+  const res=parseStrict(txt);
+  if(res.err){showNotif(res.err,'error');return}
+
+  try{
+    const tgl=new Date().toLocaleDateString('id-ID');
+    const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+    data.push({t:tgl,ket:res.ket,c:res.cat,n:'',jml:res.jml});
+    localStorage.setItem(KEY,JSON.stringify(data));
+
+    showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success');
+    inputEl.value='';
+    renderSaldo();
+  }catch(err){
+    showNotif('Gagal simpan. Storage penuh','error');
   }
 }
-
-// 3. UNDO REDO
-document.querySelector('.btn-undo').onclick = ()=>{ if(historyIndex>0){historyIndex--;data=JSON.parse(history[historyIndex]);render();}}
-document.querySelector('.btn-redo').onclick = ()=>{ if(historyIndex<history.length-1){historyIndex++;data=JSON.parse(history[historyIndex]);render();}}
-
-render();
 </script>
 </body>
 </html>

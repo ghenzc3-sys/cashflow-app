@@ -1,32 +1,31 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Cashflow V13.8.3</title>
+<title>Detail Cashflow V13.8.5</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   body{font-family:'Inter',sans-serif;background:#f1f5f9}
   th{background:#2563eb;color:#fff;font-weight:600;font-size:13px}
   td{font-size:13px}
-.btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
-.btn-del:hover{background:#dc2626}
-.btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
-.btn-kembali{background:#3b82f6;color:#fff} /* Biru */
-.btn-kosongkan{background:#ef4444;color:#fff} /* Merah */
+ .btn-del{background:#ef4444;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700}
+ .btn-del:hover{background:#dc2626}
+ .btn-top{padding:6px 10px;border-radius:8px;font-size:12px;font-weight:700}
+ .btn-kembali{background:#3b82f6;color:#fff} /* Biru */
+ .btn-kosongkan{background:#ef4444;color:#fff} /* Merah */
 </style>
 </head>
 <body class="p-3">
 
 <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-4">
-  
-  <!-- HEADER ATAS = UNDO REDO EXPORT DI SINI -->
+
+  <!-- HEADER ATAS = UNDO REDO EXPORT -->
   <div class="flex items-center justify-between mb-3">
     <div class="flex items-center gap-2">
       <span class="text-xl">📊</span>
-      <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8.3</h1>
+      <h1 class="text-lg font-bold text-slate-800">Detail Cashflow V13.8.5</h1>
     </div>
     <div class="flex gap-1">
       <button id="btnUndo" class="btn-top bg-slate-500 text-white">↶</button>
@@ -61,13 +60,9 @@
     <table class="w-full">
       <thead>
         <tr>
-          <th class="p-2">No</th>
-          <th class="p-2">Tgl</th>
-          <th class="p-2">Ket</th>
-          <th class="p-2">Catatan</th>
-          <th class="p-2">Nama</th>
-          <th class="p-2 text-right">Nominal</th>
-          <th class="p-2 text-right">Sisa Harian</th>
+          <th class="p-2">No</th><th class="p-2">Tgl</th><th class="p-2">Ket</th>
+          <th class="p-2">Catatan</th><th class="p-2">Nama</th>
+          <th class="p-2 text-right">Nominal</th><th class="p-2 text-right">Sisa Harian</th>
           <th class="p-2 text-center">Aksi</th>
         </tr>
       </thead>
@@ -80,19 +75,11 @@
       </tfoot>
     </table>
   </div>
-
 </div>
 
 <script>
-// ====== DATA DUMMY KAMU ======
-let data = [
-  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Gaji', nominal:5000000},
-  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Makan', nominal:50000},
-  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Hutang pak joko', nominal:50000},
-  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Nyaur pak joko', nominal:5000},
-  {tanggal:'2026-09-04', ket:'Keluar', catatan:'Dipinjam bu eni', nominal:60000},
-  {tanggal:'2026-09-04', ket:'Masuk', catatan:'Kembali bu eni', nominal:5000},
-];
+// ====== LOGIKA LAMA: BACA DARI LOCALSTORAGE ======
+let data = JSON.parse(localStorage.getItem('cashflowData')) || [];
 
 // ====== HISTORY UNDO/REDO ======
 let history = [JSON.stringify(data)];
@@ -109,6 +96,8 @@ function saveState(){
   if(isNavigatingHistory) return;
   history = history.slice(0, historyIndex + 1);
   history.push(JSON.stringify(data));
+  // SIMPEN JUGA KE LOCALSTORAGE BIAR INDEX KEBCAA
+  localStorage.setItem('cashflowData', JSON.stringify(data));
   historyIndex++;
   updateBtn();
 }
@@ -123,6 +112,7 @@ btnUndo.onclick = ()=>{
     isNavigatingHistory = true;
     historyIndex--;
     data = JSON.parse(history[historyIndex]);
+    localStorage.setItem('cashflowData', JSON.stringify(data)); // Sync ke kulkas
     render();
     isNavigatingHistory = false;
     updateBtn();
@@ -134,20 +124,21 @@ btnRedo.onclick = ()=>{
     isNavigatingHistory = true;
     historyIndex++;
     data = JSON.parse(history[historyIndex]);
+    localStorage.setItem('cashflowData', JSON.stringify(data)); // Sync ke kulkas
     render();
     isNavigatingHistory = false;
     updateBtn();
   }
 }
 
-// TOMBOL KEMBALI = BALIK KE INDEX.HTML
-btnKembali.onclick = ()=>{ 
-  window.location.href = 'index.html'; 
-}
-// TOMBOL KOSONGKAN = HAPUS SEMUA DATA
+// TOMBOL KEMBALI = MASIH UNDO DULU, SESUAI V13.8.3
+btnKembali.onclick = ()=>{ btnUndo.click(); }
+
+// TOMBOL KOSONGKAN = HAPUS SEMUA DATA + KULKAS
 btnKosongkan.onclick = ()=>{
   if(confirm('Yakin kosongkan semua data?')){
     data = [];
+    localStorage.setItem('cashflowData', '[]'); // Kosongin kulkas juga
     saveState();
     render();
   }
@@ -156,11 +147,11 @@ btnKosongkan.onclick = ()=>{
 // ====== RENDER TABEL ======
 function render(){
   const tbody = document.getElementById('tbody');
-  if(history.length === 1 &&!isNavigatingHistory) saveState(); // Simpan state awal
+  if(history.length === 1 &&!isNavigatingHistory) saveState();
 
   tbody.innerHTML = '';
   let sisaHarian = 0;
-  
+
   data.forEach((r,i)=>{
     if(r.ket==='Masuk') sisaHarian += r.nominal;
     else sisaHarian -= r.nominal;
@@ -191,7 +182,7 @@ function hapus(i){
   render();
 }
 
-// ====== UPDATE CARDS LOGIKA V13.7 TETEP = INCLUDES ======
+// ====== UPDATE CARDS LOGIKA V13.7 = INCLUDES ======
 function updateCards(){
   let masuk=0, keluar=0, piutang=0, utang=0, sisaHarian=0;
   data.forEach(r=>{
@@ -204,7 +195,7 @@ function updateCards(){
     if(c.includes('dipinjam')) piutang += v;
     if(c.includes('kembali')) piutang -= v;
   });
-  
+
   document.getElementById('saldo').textContent = 'Rp '+(masuk-keluar).toLocaleString('id-ID');
   document.getElementById('masuk').textContent = 'Rp '+masuk.toLocaleString('id-ID');
   document.getElementById('keluar').textContent = 'Rp '+keluar.toLocaleString('id-ID');
@@ -219,7 +210,7 @@ btnExport.onclick = ()=>{
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
-  XLSX.writeFile(wb, "Cashflow_V13.8.3.xlsx");
+  XLSX.writeFile(wb, "Cashflow_V13.8.5.xlsx");
 }
 
 render();

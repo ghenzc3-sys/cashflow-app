@@ -9,25 +9,25 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,var(--biru-gelap),var(--biru));margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
 .box{background:#fff;border-radius:28px;padding:28px;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.25);text-align:center}
-.logo{font-size:36px;margin-bottom:8px}
-h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px}
-.label{font-size:13px;color:#6b7280;letter-spacing:1.2px;margin-bottom:10px;font-weight:700}
-.saldo-box{display:flex;gap:10px;align-items:center;margin-bottom:18px}
-.saldo{flex:1;border:2.5px solid var(--biru);border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:var(--biru-gelap);background:#f0f9ff}
-.eye{background:var(--biru);color:#fff;border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;flex-shrink:0}
-.input-wrap{display:flex;gap:10px;margin-bottom:8px}
-.input{flex:1;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;transition:.2s}
+.logo{font-size:36px;margin-bottom:8px} /* [CSS] Ikon 💵 atas */
+h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px} /* [CSS] Judul Cashflow */
+.label{font-size:13px;color:#6b7280;letter-spacing:1.2px;margin-bottom:10px;font-weight:700} /* [CSS] Label SALDO SAAT INI */
+.saldo-box{display:flex;gap:10px;align-items:center;margin-bottom:18px} /* [CSS] Wrapper Saldo + Eye */
+.saldo{flex:1;border:2.5px solid var(--biru);border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:var(--biru-gelap);background:#f0f9ff} /* Card Saldo */
+.eye{background:var(--biru);color:#fff;border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;flex-shrink:0} /* [TOMBOL] Ikon 👁️ Buka/Tutup Saldo */
+.input-wrap{display:flex;gap:10px;margin-bottom:8px} /* [CSS] Wrapper Input + Simpan */
+.input{flex:1;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;transition:.2s} /* [CSS] Input teks */
 .input:focus{outline:none;border-color:var(--biru)}
-.input.error{border-color:var(--merah);background:#fef2f2}
-.input.success{border-color:var(--hijau);background:#f0fdf4}
-.btn-simpan{background:var(--biru);color:#fff;border:none;border-radius:18px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer}
+.input.error{border-color:var(--merah);background:#fef2f2} /* [LOGIKA] Style input saat error */
+.input.success{border-color:var(--hijau);background:#f0fdf4} /* [LOGIKA] Style input saat sukses */
+.btn-simpan{background:var(--biru);color:#fff;border:none;border-radius:18px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer} /* [TOMBOL] Tombol Simpan */
 .btn-simpan:hover{opacity:.9}
-.btn-detail{width:100%;background:var(--tosca);color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px}
+.btn-detail{width:100%;background:var(--tosca);color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px} /* [TOMBOL] Tombol Lihat Detail → */
 .btn-detail:hover{opacity:.9}
-.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left;line-height:1.4}
-.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px;transition:.2s}
-.notif.error{color:var(--merah)}
-.notif.success{color:var(--hijau)}
+.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left;line-height:1.4} /* [CSS] Hint keyword */
+.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px;transition:.2s} /* [CSS] Notifikasi */
+.notif.error{color:var(--merah)} /* [LOGIKA] Warna notif error */
+.notif.success{color:var(--hijau)} /* [LOGIKA] Warna notif sukses */
 </style>
 </head>
 <body>
@@ -36,37 +36,37 @@ h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px}
   <h1>Cashflow</h1>
   <div class="label">SALDO SAAT INI</div>
   <div class="saldo-box">
-    <div class="saldo" id="saldo">Rp *******</div>
-    <button class="eye" id="eye">👁️</button>
+    <div class="saldo" id="saldo">Rp *******</div> <!-- Card Saldo Real-time -->
+    <button class="eye" id="eye">👁️</button> <!-- [TOMBOL] Ikon 👁️ Toggle Saldo -->
   </div>
   <form id="form">
     <div class="input-wrap">
-      <input class="input" id="cat" placeholder="isi dengan benar dan teliti" required>
-      <button class="btn-simpan">Simpan</button>
+      <input class="input" id="cat" placeholder="isi dengan benar dan teliti" required> <!-- [INPUT] Input keyword + nominal + nama -->
+      <button class="btn-simpan">Simpan</button> <!-- [TOMBOL] Tombol Simpan Data -->
     </div>
-    <div class="notif" id="notif"></div>
+    <div class="notif" id="notif"></div> <!-- [DOM] Tempat Notifikasi Error/Sukses -->
   </form>
   <div class="hint">
-    Masuk: gaji, upah, dapat, hutang+nama<br>
-    Keluar: beli, bayar+nama, nyaur+nama, jajan
+    Masuk: gaji, upah, dapat, hutang+nama<br> <!-- [HINT] Keyword Masuk -->
+    Keluar: beli, bayar+nama, nyaur+nama, jajan <!-- [HINT] Keyword Keluar -->
   </div>
-  <button class="btn-detail" onclick="location.href='/detail.html'">Lihat Detail →</button>
+  <button class="btn-detail" onclick="location.href='/detail.html'">Lihat Detail →</button> <!-- [TOMBOL] Tombol Pindah ke gx1 detail.html -->
 </div>
 
 <script>
-const KEY='cashflow_v13';
-let showSaldo=false;
+const KEY='cashflow_v13'; // [KEY] Sama kayak gx1 detail.html biar nyambung
+let showSaldo=false; // [VAR] Status toggle saldo
 const inputEl=document.getElementById('cat');
 const notifEl=document.getElementById('notif');
 
-const KEYWORDS={
-  masuk:['gaji','upah','dapat'],
-  masukNama:['hutang','kembali'],
-  keluar:['beli','jajan'],
-  keluarNama:['bayar','nyaur','dipinjam']
+const KEYWORDS={ // [LOGIKA] Daftar keyword valid
+  masuk:['gaji','upah','dapat'], // [LOGIKA] Masuk tanpa nama wajib
+  masukNama:['hutang','kembali'], // [LOGIKA] Masuk harus +nama
+  keluar:['beli','jajan'], // [LOGIKA] Keluar tanpa nama wajib
+  keluarNama:['bayar','nyaur','dipinjam'] // [LOGIKA] Keluar harus +nama/tujuan
 }
 
-const showNotif=(msg,type)=>{
+const showNotif=(msg,type)=>{ // [FUNGSI] Tampilkan notif 2.5 detik
   notifEl.textContent=msg;
   notifEl.className='notif '+type;
   inputEl.className='input '+type;
@@ -77,22 +77,22 @@ const showNotif=(msg,type)=>{
   },2500);
 }
 
-const parseStrict=(txt)=>{
+const parseStrict=(txt)=>{ // [LOGIKA] Parser input strict. Harus sesuai keyword
   txt=txt.trim();
   const lower=txt.toLowerCase();
-  const jml=Number(lower.match(/\d+/g)?.join('')||0);
+  const jml=Number(lower.match(/\d+/g)?.join('')||0); // [LOGIKA] Ambil semua angka jadi nominal
   if(jml===0) return {err:'Nominal gak ketemu bang'};
 
-  const kata=lower.replace(/\d+/g,'').trim().split(/\s+/);
-  const key=kata[0];
-  const sisa=kata.slice(1).join(' ');
+  const kata=lower.replace(/\d+/g,'').trim().split(/\s+/); // [LOGIKA] Ambil kata tanpa angka
+  const key=kata[0]; // [VAR] Keyword pertama
+  const sisa=kata.slice(1).join(' '); // [VAR] Sisa kata = nama/tujuan
 
   // 1. Cek Masuk tanpa nama
   if(KEYWORDS.masuk.includes(key)) return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
 
   // 2. Cek Masuk wajib nama
   if(KEYWORDS.masukNama.includes(key)){
-    if(!sisa) return {err:`${key} wajib +nama. Contoh: ${key} Budi ${jml}`};
+    if(!sisa) return {err:`${key} wajib +nama. Contoh: ${key} Budi ${jml}`}; // [LOGIKA] Validasi nama wajib
     return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
   }
 
@@ -101,44 +101,44 @@ const parseStrict=(txt)=>{
 
   // 4. Cek Keluar wajib nama
   if(KEYWORDS.keluarNama.includes(key)){
-    if(!sisa) return {err:`${key} wajib +nama/tujuan. Contoh: ${key} Kos ${jml}`};
+    if(!sisa) return {err:`${key} wajib +nama/tujuan. Contoh: ${key} Kos ${jml}`}; // [LOGIKA] Validasi nama wajib
     return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
   }
 
-  return {err:'Keyword tidak valid. Cek hint di bawah'};
+  return {err:'Keyword tidak valid. Cek hint di bawah'}; // [LOGIKA] Keyword salah
 }
 
-const renderSaldo=()=>{
+const renderSaldo=()=>{ // [LOGIKA] Hitung & tampilkan saldo real-time
   const data=JSON.parse(localStorage.getItem(KEY)||'[]');
-  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0); // [LOGIKA] Saldo = Masuk - Keluar
   document.getElementById('saldo').textContent=showSaldo?`Rp ${saldo.toLocaleString('id-ID')}`:'Rp *******';
 }
-renderSaldo();
+renderSaldo(); // [LOGIKA] Render pertama kali
 
-document.getElementById('eye').onclick=()=>{
-  showSaldo=!showSaldo;
+document.getElementById('eye').onclick=()=>{ // [TOMBOL] Logika tombol 👁️
+  showSaldo=!showSaldo; // [LOGIKA] Toggle show/hide
   renderSaldo();
 }
 
-document.getElementById('form').onsubmit=e=>{
+document.getElementById('form').onsubmit=e=>{ // [TOMBOL] Logika submit form Simpan
   e.preventDefault();
   const txt=inputEl.value.trim();
-  if(!txt){showNotif('Input jangan kosong bang','error');return}
+  if(!txt){showNotif('Input jangan kosong bang','error');return} // [LOGIKA] Validasi kosong
 
-  const res=parseStrict(txt);
-  if(res.err){showNotif(res.err,'error');return}
+  const res=parseStrict(txt); // [LOGIKA] Parse input
+  if(res.err){showNotif(res.err,'error');return} // [LOGIKA] Kalau error tampilkan
 
   try{
-    const tgl=new Date().toLocaleDateString('id-ID');
+    const tgl=new Date().toLocaleDateString('id-ID'); // [LOGIKA] Ambil tanggal hari ini
     const data=JSON.parse(localStorage.getItem(KEY)||'[]');
-    data.push({t:tgl,ket:res.ket,c:res.cat,n:'',jml:res.jml});
-    localStorage.setItem(KEY,JSON.stringify(data));
+    data.push({t:tgl,ket:res.ket,c:res.cat,n:'',jml:res.jml}); // [LOGIKA] Simpan ke array. n='' karena nama belum dipisah
+    localStorage.setItem(KEY,JSON.stringify(data)); // [KEY] Simpan ke localStorage gx1
 
-    showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success');
+    showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success'); // [LOGIKA] Notif sukses
     inputEl.value='';
-    renderSaldo();
+    renderSaldo(); // [LOGIKA] Update saldo setelah simpan
   }catch(err){
-    showNotif('Gagal simpan. Storage penuh','error');
+    showNotif('Gagal simpan. Storage penuh','error'); // [LOGIKA] Catch error storage
   }
 }
 </script>

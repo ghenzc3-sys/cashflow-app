@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,67 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Cashflow</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
-body{background:linear-gradient(135deg,#3b82f6,#1d4ed8);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.box{background:#fff;border-radius:24px;padding:24px;width:100%;max-width:380px;box-shadow:0 20px 40px rgba(0,0,0,.15);text-align:center}
-.box.icon{font-size:40px;margin-bottom:8px}
-.box h1{font-size:28px;font-weight:800;color:#2563eb;margin-bottom:16px}
-.l{font-size:12px;font-weight:700;color:#6b7280;letter-spacing:1px;margin-bottom:8px}
-.saldo{border:2px solid #93c5fd;border-radius:16px;padding:16px;background:#eff6ff;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.saldo.v{font-size:22px;font-weight:800;color:#2563eb}
-.eye{background:#3b82f6;border:none;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer}
-.row{display:flex;gap:8px;margin-bottom:8px}
-input{flex:1;padding:14px;border:2px solid #e5e7eb;border-radius:12px;font-size:15px;outline:none}
-.btn{padding:14px 18px;border:none;border-radius:12px;background:#0ea5e9;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
-.info{font-size:11px;color:#6b7280;text-align:left;line-height:1.5;margin:12px 0}
-.link{width:100%;padding:14px;border:none;border-radius:14px;background:#2dd4bf;color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+:root{--biru:#0ea5e9;--biru-gelap:#2563eb;--tosca:#2dd4bf;--merah:#ef4444;--hijau:#10b981}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,var(--biru-gelap),var(--biru));margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:#fff;border-radius:28px;padding:28px;width:100%;max-width:420px;box-shadow:0 24px 48px rgba(0,0,0,.25);text-align:center}
+.logo{font-size:36px;margin-bottom:8px}
+h1{font-size:40px;font-weight:900;color:var(--biru-gelap);margin:0 0 18px}
+.label{font-size:13px;color:#6b7280;letter-spacing:1.2px;margin-bottom:10px;font-weight:700}
+.saldo-box{display:flex;gap:10px;align-items:center;margin-bottom:18px}
+.saldo{flex:1;border:2.5px solid var(--biru);border-radius:18px;padding:16px;font-size:20px;font-weight:900;color:var(--biru-gelap);background:#f0f9ff}
+.eye{background:var(--biru);color:#fff;border:none;border-radius:50%;width:48px;height:48px;font-size:20px;cursor:pointer;flex-shrink:0}
+.input-wrap{display:flex;gap:10px;margin-bottom:8px}
+.input{flex:1;border:2.5px solid #d1d5db;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;transition:.2s}
+.input:focus{outline:none;border-color:var(--biru)}
+.input.error{border-color:var(--merah);background:#fef2f2}
+.input.success{border-color:var(--hijau);background:#f0fdf4}
+.btn-simpan{background:var(--biru);color:#fff;border:none;border-radius:18px;padding:14px 20px;font-weight:900;font-size:15px;cursor:pointer}
+.btn-simpan:hover{opacity:.9}
+.btn-detail{width:100%;background:var(--tosca);color:#fff;border:none;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px}
+.btn-detail:hover{opacity:.9}
+.hint{font-size:11px;color:#9ca3af;margin-top:4px;text-align:left;line-height:1.4}
+.notif{font-size:13px;font-weight:700;margin-top:6px;min-height:18px;transition:.2s}
+.notif.error{color:var(--merah)}
+.notif.success{color:var(--hijau)}
 </style>
 </head>
 <body>
 <div class="box">
-  <div class="icon">💵</div>
+  <div class="logo">💵</div>
   <h1>Cashflow</h1>
-  <div class="l">SALDO SAAT INI</div>
-  <div class="saldo">
-    <div class="saldo v" id="kas">Rp *******</div>
+  <div class="label">SALDO SAAT INI</div>
+  <div class="saldo-box">
+    <div class="saldo" id="saldo">Rp *******</div>
     <button class="eye" id="eye">👁️</button>
   </div>
-  <div class="row">
-    <input id="inp" placeholder="isi dengan benar dan teliti">
-    <button class="btn" id="save">Simpan</button>
-  </div>
-  <div class="info">
+  <form id="form">
+    <div class="input-wrap">
+      <input class="input" id="cat" placeholder="isi dengan benar dan teliti" required>
+      <button class="btn-simpan">Simpan</button>
+    </div>
+    <div class="notif" id="notif"></div>
+  </form>
+  <div class="hint">
     Masuk: gaji, upah, dapat, hutang+nama<br>
     Keluar: beli, bayar+nama, nyaur+nama, jajan
   </div>
-  <button class="link" onclick="location.href='/detail.html'">Lihat Detail →</button>
+  <button class="btn-detail" onclick="location.href='/detail.html'">Lihat Detail →</button>
 </div>
+
 <script>
-const KEY='cashflow'; // KEY lama
-let show=false;
-const rupiah=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
-const getData=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
-const saveData=d=>localStorage.setItem(KEY,JSON.stringify(d));
-const render=()=>{
-  const d=getData();
-  const total=d.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
-  document.getElementById('kas').innerText=show?rupiah(total):'Rp *******';
+const KEY='cashflow_v13';
+let showSaldo=false;
+const inputEl=document.getElementById('cat');
+const notifEl=document.getElementById('notif');
+
+const KEYWORDS={
+  masuk:['gaji','upah','dapat'],
+  masukNama:['hutang','kembali'],
+  keluar:['beli','jajan'],
+  keluarNama:['bayar','nyaur','dipinjam']
 }
-document.getElementById('eye').onclick=()=>{show=!show;render()}
-const parse=t=>{
-  t=t.toLowerCase();
-  const m=t.match(/(\d[\d\.]*)/);if(!m)return null;
-  const jml=Number(m[1].replace(/\./g,''));
-  const ket=t.includes('gaji')||t.includes('upah')||t.includes('dapat')||t.includes('hutang')?'Masuk':'Keluar';
-  return{t:new Date().toLocaleDateString('id-ID'),ket,jml,id:Date.now()};
+
+const showNotif=(msg,type)=>{
+  notifEl.textContent=msg;
+  notifEl.className='notif '+type;
+  inputEl.className='input '+type;
+  setTimeout(()=>{
+    notifEl.textContent='';
+    notifEl.className='notif';
+    inputEl.className='input';
+  },2500);
 }
-document.getElementById('save').onclick=()=>{
-  const d=parse(document.getElementById('inp').value);
-  if(!d){alert('Format salah');return}
-  const all=getData();all.push(d);saveData(all);
-  document.getElementById('inp').value='';render();
+
+const parseStrict=(txt)=>{
+  txt=txt.trim();
+  const lower=txt.toLowerCase();
+  const jml=Number(lower.match(/\d+/g)?.join('')||0);
+  if(jml===0) return {err:'Nominal gak ketemu bang'};
+
+  const kata=lower.replace(/\d+/g,'').trim().split(/\s+/);
+  const key=kata[0];
+  const sisa=kata.slice(1).join(' ');
+
+  // 1. Cek Masuk tanpa nama
+  if(KEYWORDS.masuk.includes(key)) return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 2. Cek Masuk wajib nama
+  if(KEYWORDS.masukNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama. Contoh: ${key} Budi ${jml}`};
+    return {ket:'Masuk',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  // 3. Cek Keluar tanpa nama
+  if(KEYWORDS.keluar.includes(key)) return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+
+  // 4. Cek Keluar wajib nama
+  if(KEYWORDS.keluarNama.includes(key)){
+    if(!sisa) return {err:`${key} wajib +nama/tujuan. Contoh: ${key} Kos ${jml}`};
+    return {ket:'Keluar',cat:txt.replace(/\d+/g,'').trim(),jml};
+  }
+
+  return {err:'Keyword tidak valid. Cek hint di bawah'};
 }
-render();
+
+const renderSaldo=()=>{
+  const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+  const saldo=data.reduce((s,i)=>s+(i.ket==='Masuk'?i.jml:-i.jml),0);
+  document.getElementById('saldo').textContent=showSaldo?`Rp ${saldo.toLocaleString('id-ID')}`:'Rp *******';
+}
+renderSaldo();
+
+document.getElementById('eye').onclick=()=>{
+  showSaldo=!showSaldo;
+  renderSaldo();
+}
+
+document.getElementById('form').onsubmit=e=>{
+  e.preventDefault();
+  const txt=inputEl.value.trim();
+  if(!txt){showNotif('Input jangan kosong bang','error');return}
+
+  const res=parseStrict(txt);
+  if(res.err){showNotif(res.err,'error');return}
+
+  try{
+    const tgl=new Date().toLocaleDateString('id-ID');
+    const data=JSON.parse(localStorage.getItem(KEY)||'[]');
+    data.push({t:tgl,ket:res.ket,c:res.cat,n:'',jml:res.jml});
+    localStorage.setItem(KEY,JSON.stringify(data));
+
+    showNotif(`Tersimpan: ${res.ket} Rp ${res.jml.toLocaleString('id-ID')}`,'success');
+    inputEl.value='';
+    renderSaldo();
+  }catch(err){
+    showNotif('Gagal simpan. Storage penuh','error');
+  }
+}
 </script>
 </body>
 </html>
